@@ -9,9 +9,9 @@ spec:
       initContainers:
       - name: wait-for-db
         image: busybox:1.28
-        command: ['sh', '-c', 'until nc -z -v -w30 $POSTGRESQL_DATABASE 5432; do echo "Waiting for database connection..."; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z -v -w30 $POSTGRESQL_DATABASE_HOST 5432; do echo "Waiting for database connection..."; sleep 2; done;']
         env:
-        - name: POSTGRESQL_DATABASE
+        - name: POSTGRESQL_DATABASE_HOST
           value: transactionsdb.mlops-transactionsdb.svc.cluster.local
       containers:
       - name: postgresql
