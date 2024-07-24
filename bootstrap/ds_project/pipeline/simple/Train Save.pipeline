@@ -14,9 +14,7 @@
           "op": "execute-notebook-node",
           "app_data": {
             "component_parameters": {
-              "dependencies": [
-                "data/card_transdata.csv"
-              ],
+              "dependencies": [],
               "include_subdirectories": true,
               "outputs": [
                 "models/fraud/1/model.onnx"
