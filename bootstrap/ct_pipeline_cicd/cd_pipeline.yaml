@@ -1,1 +1,190 @@
-# Take the pipeline yaml and execute it at trigger
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: ct-cd
+  namespace: mlops-prod
+spec:
+  tasks:
+  - name: deploy-pipeline
+    taskSpec:
+      steps:
+      - name: main
+        args:
+        - |
+          ls /pipelinespec
+          cat << 'EOF' | python3
+          import kfp
+          namespace_file_path =\
+              '/var/run/secrets/kubernetes.io/serviceaccount/namespace'
+          with open(namespace_file_path, 'r') as namespace_file:
+              namespace = namespace_file.read()
+
+          kubeflow_endpoint =\
+              f'https://ds-pipeline-dspa.{namespace}.svc:8443'
+
+          sa_token_file_path = '/var/run/secrets/kubernetes.io/serviceaccount/token'
+          with open(sa_token_file_path, 'r') as token_file:
+              bearer_token = token_file.read()
+
+          ssl_ca_cert =\
+              '/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt'
+
+          print(f'Connecting to Data Science Pipelines: {kubeflow_endpoint}')
+          client = kfp.Client(
+              host=kubeflow_endpoint,
+              existing_token=bearer_token,
+              ssl_ca_cert=ssl_ca_cert
+          )
+
+          try:
+              client.upload_pipeline(
+                  pipeline_package_path="/pipelinespec/fraud-training-pipeline.yaml",
+                  pipeline_name="fraud-training-pipeline",
+              )
+              client.create_experiment(
+                name="fraud-training-pipeline",
+              )
+          except:
+              pipeline_id = client.get_pipeline_id(name = "fraud-training-pipeline")
+              version = len(client.list_pipeline_versions(pipeline_id).to_dict()["pipeline_versions"])+1
+
+              client.upload_pipeline_version(
+                  pipeline_package_path="/pipelinespec/fraud-training-pipeline.yaml",
+                  pipeline_name="fraud-training-pipeline",
+                  pipeline_version_name=f"v{version}"
+              )
+          EOF
+        command:
+        - sh
+        - -c
+        image: quay.io/rlundber/mlops-ct-cicd:0.1
+        volumeMounts:
+        - name: kube-api-access
+          readOnly: true
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        - mountPath: /pipelinespec
+          name: pipelinespec
+          readOnly: true
+      volumes:
+      - name: pipelinespec
+        configMap: 
+          name: fraud-training-pipeline
+      - name: kube-api-access
+        projected:
+          sources:
+            - serviceAccountToken:
+                expirationSeconds: 3607
+                path: token
+            - configMap:
+                name: kube-root-ca.crt
+                items:
+                  - key: ca.crt
+                    path: ca.crt
+            - downwardAPI:
+                items:
+                  - path: namespace
+                    fieldRef:
+                      apiVersion: v1
+                      fieldPath: metadata.namespace
+            - configMap:
+                name: openshift-service-ca.crt
+                items:
+                  - key: service-ca.crt
+                    path: service-ca.crt
+          defaultMode: 420
+  - name: execute-pipeline
+    taskSpec:
+      steps:
+      - name: main
+        args:
+        - |
+          cat << 'EOF' | python3
+          import kfp
+          namespace_file_path =\
+              '/var/run/secrets/kubernetes.io/serviceaccount/namespace'
+          with open(namespace_file_path, 'r') as namespace_file:
+              namespace = namespace_file.read()
+
+          kubeflow_endpoint =\
+              f'https://ds-pipeline-dspa.{namespace}.svc:8443'
+
+          sa_token_file_path = '/var/run/secrets/kubernetes.io/serviceaccount/token'
+          with open(sa_token_file_path, 'r') as token_file:
+              bearer_token = token_file.read()
+
+          ssl_ca_cert =\
+              '/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt'
+
+          print(f'Connecting to Data Science Pipelines: {kubeflow_endpoint}')
+          client = kfp.Client(
+              host=kubeflow_endpoint,
+              existing_token=bearer_token,
+              ssl_ca_cert=ssl_ca_cert
+          )
+
+          # Get pipeline id
+          pipeline_id = client.get_pipeline_id(name = "fraud-training-pipeline")
+
+          # Get version id
+          version_id = None
+          latest_version = None
+          versions = client.list_pipeline_versions(pipeline_id).to_dict()["pipeline_versions"]
+          for v in versions:
+            if not version_id:
+              version_id = v["pipeline_version_id"]
+              latest_version = v["created_at"]
+            elif v["created_at"] > latest_version:
+              version_id = v["pipeline_version_id"]
+              latest_version = v["created_at"]
+
+          # Get experiment id
+          experiment_id = client.get_experiment(experiment_name="fraud-training-pipeline").to_dict()["experiment_id"]
+
+          client.run_pipeline(
+              pipeline_id = pipeline_id,
+              experiment_id = experiment_id,
+              job_name = "fraud-training-pipeline",
+              version_id = version_id,
+              enable_caching=False
+          )
+          EOF
+        command:
+        - sh
+        - -c
+        image: quay.io/rlundber/mlops-ct-cicd:0.1
+        volumeMounts:
+        - name: kube-api-access
+          readOnly: true
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        - mountPath: /pipelinespec
+          name: pipelinespec
+          readOnly: true
+      volumes:
+      - name: pipelinespec
+        configMap: 
+          name: fraud-training-pipeline
+      - name: kube-api-access
+        projected:
+          sources:
+            - serviceAccountToken:
+                expirationSeconds: 3607
+                path: token
+            - configMap:
+                name: kube-root-ca.crt
+                items:
+                  - key: ca.crt
+                    path: ca.crt
+            - downwardAPI:
+                items:
+                  - path: namespace
+                    fieldRef:
+                      apiVersion: v1
+                      fieldPath: metadata.namespace
+            - configMap:
+                name: openshift-service-ca.crt
+                items:
+                  - key: service-ca.crt
+                    path: service-ca.crt
+          defaultMode: 420
+    runAfter:
+    - deploy-pipeline

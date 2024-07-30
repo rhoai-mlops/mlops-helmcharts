@@ -1,2 +1,116 @@
-# At changes in git, compile the pipeline and push it somewhere available to use, like a CR
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: ct-ci
+  namespace: mlops-prod
+spec:
+  tasks:
+  - name: initialize
+    taskSpec:
+      steps:
+      - name: main
+        args:
+        - |
+          cd /shared-data
+          rm -r *
+          git clone https://github.com/RHRolun/mlops-pipeline-garden
+          ls
+        command:
+        - sh
+        - -c
+        image: quay.io/rlundber/mlops-ct-cicd:0.1
+        volumeMounts:
+        - mountPath: /shared-data
+          name: ct-ci-shared
+          readOnly: false
+      volumes:
+      - name: ct-ci-shared
+        persistentVolumeClaim:
+          claimName: ct-ci-shared
+  - name: build-pipeline
+    taskSpec:
+      steps:
+      - name: main
+        args:
+        - |
+          cd /shared-data
+          cd mlops-pipeline-garden/fraud-detection/production
 
+          cat << 'EOF' | python3
+          from pipeline import fraud_training_pipeline
+          from kfp import compiler
+          import json
+
+          with open('default_parameters.json') as f:
+            default_parameters = json.load(f)
+          compiler.Compiler().compile(
+            fraud_training_pipeline, 
+            package_path='fraud-training-pipeline.yaml', 
+            pipeline_parameters=default_parameters
+          )
+
+          EOF
+
+          ls
+          yaml_file="fraud-training-pipeline.yaml"
+          key=enableCache
+          new_value=false
+          sed -r "s/^(\s*${key}\s*:\s*).*/\1${new_value}/" -i "$yaml_file"
+        command:
+        - sh
+        - -c
+        image: quay.io/rlundber/mlops-ct-cicd:0.1
+        volumeMounts:
+        - mountPath: /shared-data
+          name: ct-ci-shared
+          readOnly: false
+      volumes:
+      - name: ct-ci-shared
+        persistentVolumeClaim:
+          claimName: ct-ci-shared
+    runAfter:
+    - initialize
+  - name: test-pipeline
+    taskSpec:
+      steps:
+      - name: main
+        args:
+        - |
+          echo "run some tests"
+        command:
+        - sh
+        - -c
+        image: quay.io/rlundber/mlops-ct-cicd:0.1
+        volumeMounts:
+        - mountPath: /shared-data
+          name: ct-ci-shared
+          readOnly: false
+      volumes:
+      - name: ct-ci-shared
+        persistentVolumeClaim:
+          claimName: ct-ci-shared
+    runAfter:
+    - build-pipeline
+  - name: push-pipeline
+    taskSpec:
+      steps:
+      - name: main
+        args:
+        - |
+          cd /shared-data
+          cd mlops-pipeline-garden/fraud-detection/production
+          oc create configmap fraud-training-pipeline --from-file=fraud-training-pipeline.yaml --dry-run=client -o yaml | oc apply -f -
+        command:
+        - sh
+        - -c
+        image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
+        volumeMounts:
+        - mountPath: /shared-data
+          name: ct-ci-shared
+          readOnly: false
+      volumes:
+      - name: ct-ci-shared
+        persistentVolumeClaim:
+          claimName: ct-ci-shared
+    runAfter:
+    - test-pipeline

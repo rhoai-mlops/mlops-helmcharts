@@ -1,0 +1,28 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: trigger-template-ct-ci
+  namespace: mlops-prod
+spec:
+  params:
+    - name: git-revision
+    - name: git-commit-message
+    - name: git-repo-url
+    - name: git-repo-name
+    - name: content-type
+    - name: pusher-name
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1
+      kind: PipelineRun
+      metadata:
+        annotations: {}
+        generateName: ct-ci-
+        labels:
+          tekton.dev/pipeline: ct-ci
+        namespace: mlops-prod
+      spec:
+        params: []
+        pipelineRef:
+          name: ct-ci
+        status: null
+        workspaces: []
