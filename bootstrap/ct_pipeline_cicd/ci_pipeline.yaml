@@ -50,8 +50,9 @@ spec:
           )
 
           EOF
-
           ls
+
+          # Turn off caching
           yaml_file="fraud-training-pipeline.yaml"
           key=enableCache
           new_value=false
