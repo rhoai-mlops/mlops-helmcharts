@@ -19,7 +19,6 @@ spec:
         generateName: ct-ci-
         namespace: mlops-prod
       spec:
-        serviceAccountName: ct-ci-triggers-sa
         pipelineRef:
           name: ct-ci
         workspaces:
@@ -52,7 +51,6 @@ metadata:
   name: ct-ci-listener
   namespace: mlops-prod
 spec:
-  serviceAccountName: ct-ci-triggers-sa
   triggers:
     - bindings:
       - ref: ct-ci-pipelinebinding
