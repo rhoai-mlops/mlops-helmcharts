@@ -58,3 +58,20 @@ spec:
       - ref: ct-ci-pipelinebinding
       template:
         ref: ct-ci-trigger-template
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: el-ct-ci-listener
+  namespace: mlops-prod
+spec:
+  to:
+    kind: Service
+    name: el-ct-ci-listener
+    weight: 100
+  port:
+    targetPort: http-listener
+  wildcardPolicy: None
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
