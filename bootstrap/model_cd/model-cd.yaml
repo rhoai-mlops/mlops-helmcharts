@@ -1,0 +1,71 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: model-cd
+  namespace: mlops-prod
+spec:
+  params:
+  - name: model_path
+    default: '/path/to/model'
+  - name: runtime
+    default: 'kserve-ovms'
+  - name: model_type
+    default: 'onnx'
+  tasks:
+  - name: create-inference-service
+    taskSpec:
+      steps:
+      - name: main
+        args:
+        - |
+          oc apply -f - <<EOF
+          runtime
+          # Don't want to create a runtime, can we use the RHOAI API instead?
+          ---
+          apiVersion: serving.kserve.io/v1beta1
+          kind: InferenceService
+          metadata:
+            annotations:
+              openshift.io/display-name: onnx_model2
+              serving.knative.openshift.io/enablePassthrough: 'true'
+              sidecar.istio.io/inject: 'true'
+              sidecar.istio.io/rewriteAppHTTPProbers: 'true'
+            name: onnxmodel2
+            namespace: mlops-prod
+            finalizers:
+              - inferenceservice.finalizers
+            labels:
+              opendatahub.io/dashboard: 'true'
+          spec:
+            predictor:
+              maxReplicas: 0
+              minReplicas: 1
+              model:
+                modelFormat:
+                  name: $(model_type)
+                  version: '1'
+                name: ''
+                resources:
+                  limits:
+                    cpu: '2'
+                    memory: 8Gi
+                  requests:
+                    cpu: '1'
+                    memory: 4Gi
+                runtime: $(runtime)
+                storage:
+                  key: aws-connection-pipeline
+                  path: $(model_path)
+          EOF
+        command:
+        - sh
+        - -c
+        image: quay.io/rlundber/mlops-ct-cicd:0.1
+        volumeMounts:
+        - mountPath: /shared-data
+          name: ct-ci-shared
+          readOnly: false
+      volumes:
+      - name: ct-ci-shared
+        persistentVolumeClaim:
+          claimName: ct-ci-shared
