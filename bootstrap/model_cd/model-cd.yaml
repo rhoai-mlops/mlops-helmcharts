@@ -5,67 +5,31 @@ metadata:
   namespace: mlops-prod
 spec:
   params:
-  - name: model_path
+  - name: new_model_path
     default: '/path/to/model'
-  - name: runtime
-    default: 'kserve-ovms'
-  - name: model_type
-    default: 'onnx'
+  - name: model_name
+    default: 'fraud_detection'
   tasks:
-  - name: create-inference-service
+  - name: modify-inference-service
     taskSpec:
       steps:
       - name: main
         args:
         - |
-          oc apply -f - <<EOF
-          runtime
-          # Don't want to create a runtime, can we use the RHOAI API instead?
-          ---
-          apiVersion: serving.kserve.io/v1beta1
-          kind: InferenceService
-          metadata:
-            annotations:
-              openshift.io/display-name: onnx_model2
-              serving.knative.openshift.io/enablePassthrough: 'true'
-              sidecar.istio.io/inject: 'true'
-              sidecar.istio.io/rewriteAppHTTPProbers: 'true'
-            name: onnxmodel2
-            namespace: mlops-prod
-            finalizers:
-              - inferenceservice.finalizers
-            labels:
-              opendatahub.io/dashboard: 'true'
-          spec:
-            predictor:
-              maxReplicas: 0
-              minReplicas: 1
-              model:
-                modelFormat:
-                  name: $(model_type)
-                  version: '1'
-                name: ''
-                resources:
-                  limits:
-                    cpu: '2'
-                    memory: 8Gi
-                  requests:
-                    cpu: '1'
-                    memory: 4Gi
-                runtime: $(runtime)
-                storage:
-                  key: aws-connection-pipeline
-                  path: $(model_path)
-          EOF
+          git clone https://github.com/RHRolun/mlops-model-servers
+          cd mlops-model-servers
+
+          import yaml
+          with open('$(params.model_name).yaml', 'r') as file:
+              crd = yaml.safe_load(file)
+          
+          crd['spec']['predictor']['model']['storage']['path'] = '$(params.new_model_path)'
+          
+          with open('$(params.model_name).yaml', 'w') as file:
+              yaml.dump(crd, file)
+
+          
         command:
         - sh
         - -c
         image: quay.io/rlundber/mlops-ct-cicd:0.1
-        volumeMounts:
-        - mountPath: /shared-data
-          name: ct-ci-shared
-          readOnly: false
-      volumes:
-      - name: ct-ci-shared
-        persistentVolumeClaim:
-          claimName: ct-ci-shared
