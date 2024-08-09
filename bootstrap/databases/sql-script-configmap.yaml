@@ -26,7 +26,7 @@ data:
         used_pin_number NUMERIC,
         online_order NUMERIC,
         fraud NUMERIC,
-        event_timestamp DATE
+        event_timestamp TIMESTAMP
     )
     WITH (
         OIDS = FALSE
