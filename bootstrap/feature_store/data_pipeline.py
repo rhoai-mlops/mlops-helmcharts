@@ -20,9 +20,9 @@ def extract_data(
     
     conn = psycopg2.connect(
         host=source_con_details['host'],
-        database=os.env["DATABASE-NAME"],
-        user=os.env["DATABASE-USER"],
-        password=os.env["DATABASE-PASSWORD"],
+        database=os.environ["DATABASE-NAME"],
+        user=os.environ["DATABASE-USER"],
+        password=os.environ["DATABASE-PASSWORD"],
     )
     query = f"SELECT * FROM {source_con_details['table']}"
     df = pd.read_sql_query(query, conn)
@@ -47,12 +47,13 @@ def load_data(
 ):
     import psycopg2
     import pandas as pd
+    import os
     
     conn = psycopg2.connect(
         host=target_con_details['host'],
-        database=os.env["DATABASE-NAME"],
-        user=os.env["DATABASE-USER"],
-        password=os.env["DATABASE-PASSWORD"],
+        database=os.environ["DATABASE-NAME"],
+        user=os.environ["DATABASE-USER"],
+        password=os.environ["DATABASE-PASSWORD"],
     )
     df = pd.read_csv(data)
     df.to_sql(target_con_details['table'], conn, if_exists='replace', index=False)
