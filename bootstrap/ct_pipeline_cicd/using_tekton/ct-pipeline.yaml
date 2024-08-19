@@ -18,7 +18,7 @@ spec:
         command:
         - sh
         - -c
-        image: quay.io/rlundber/mlops-ct-cicd:0.1
+        image: quay.io/rlundber/mlops-ct-cicd:0.4
         volumeMounts:
         - mountPath: /shared-data
           name: ct-ci-shared
@@ -88,7 +88,7 @@ spec:
         command:
         - sh
         - -c
-        image: quay.io/rlundber/mlops-ct-cicd:0.1
+        image: quay.io/rlundber/mlops-ct-cicd:0.4
         volumeMounts:
         - name: kube-api-access
           readOnly: true
