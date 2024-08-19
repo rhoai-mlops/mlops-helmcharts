@@ -44,28 +44,18 @@ spec:
           value: "true"
         - name: sslVerify
           value: "false"
-  # - name: initialize
-  #   taskSpec:
-  #     steps:
-  #     - name: main
-  #       args:
-  #       - |
-  #         cd /shared-data
-  #         rm -r *
-  #         git clone https://github.com/RHRolun/mlops-pipeline-garden
-  #         ls
-  #       command:
-  #       - sh
-  #       - -c
-  #       image: quay.io/rlundber/mlops-ct-cicd:0.1
-  #       volumeMounts:
-  #       - mountPath: /shared-data
-  #         name: ct-ci-shared
-  #         readOnly: false
-  #     volumes:
-  #     - name: ct-ci-shared
-  #       persistentVolumeClaim:
-  #         claimName: ct-ci-shared
+    - name: execute-ds-pipeline
+      taskRef:
+        name: execute-ds-pipeline
+        kind: Task
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: WORK_DIRECTORY
+          value: "$(params.APPLICATION_NAME)/$(params.GIT_BRANCH)"
+      runAfter:
+        - fetch-ds-pipeline-repository
   # - name: execute-pipeline
   #   taskSpec:
   #     steps:
@@ -163,4 +153,4 @@ spec:
   #                   path: service-ca.crt
   #         defaultMode: 420
   #   runAfter:
-  #   - initialize
+  #   - fetch-ds-pipeline-repository
