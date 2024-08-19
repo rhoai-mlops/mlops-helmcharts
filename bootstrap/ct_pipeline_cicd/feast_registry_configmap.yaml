@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: feast-registry
-  namespace: mlops-dev-zone
+  namespace: mlops-prod
 data:
   feature_store.yaml: |  
     project: feast_from_file
