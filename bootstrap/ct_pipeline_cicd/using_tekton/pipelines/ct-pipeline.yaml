@@ -1,0 +1,166 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: ct-pipeline
+spec:
+  workspaces:
+    - name: shared-workspace
+  params:
+    - name: APPLICATION_NAME
+      type: string
+      default: ""
+    - name: GIT_URL
+      type: string
+      default: ""
+    - name: GIT_REVISION
+      type: string
+      default: "main"
+    - name: GIT_REF
+      type: string
+      default: "refs/heads/main"
+    - name: GIT_SHORT_REVISION
+      type: string
+      default: ""
+    - name: GIT_BRANCH
+      type: string
+      default: ""
+  tasks:
+    - name: fetch-ds-pipeline-repository
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: "$(params.GIT_URL)"
+        - name: revision
+          value: "main"
+        - name: subdirectory
+          value: "$(params.APPLICATION_NAME)/$(params.GIT_BRANCH)"
+        - name: deleteExisting
+          value: "true"
+        - name: sslVerify
+          value: "false"
+  # - name: initialize
+  #   taskSpec:
+  #     steps:
+  #     - name: main
+  #       args:
+  #       - |
+  #         cd /shared-data
+  #         rm -r *
+  #         git clone https://github.com/RHRolun/mlops-pipeline-garden
+  #         ls
+  #       command:
+  #       - sh
+  #       - -c
+  #       image: quay.io/rlundber/mlops-ct-cicd:0.1
+  #       volumeMounts:
+  #       - mountPath: /shared-data
+  #         name: ct-ci-shared
+  #         readOnly: false
+  #     volumes:
+  #     - name: ct-ci-shared
+  #       persistentVolumeClaim:
+  #         claimName: ct-ci-shared
+  # - name: execute-pipeline
+  #   taskSpec:
+  #     steps:
+  #     - name: main
+  #       args:
+  #       - |
+  #         cd /shared-data
+  #         cd mlops-pipeline-garden/fraud-detection/production
+
+  #         cat << 'EOF' | python3
+  #         import kfp
+  #         import json
+  #         from pipeline import fraud_training_pipeline
+
+  #         namespace_file_path =\
+  #             '/var/run/secrets/kubernetes.io/serviceaccount/namespace'
+  #         with open(namespace_file_path, 'r') as namespace_file:
+  #             namespace = namespace_file.read()
+
+  #         kubeflow_endpoint =\
+  #             f'https://ds-pipeline-dspa.{namespace}.svc:8443'
+
+  #         sa_token_file_path = '/var/run/secrets/kubernetes.io/serviceaccount/token'
+  #         with open(sa_token_file_path, 'r') as token_file:
+  #             bearer_token = token_file.read()
+
+  #         ssl_ca_cert =\
+  #             '/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt'
+
+  #         print(f'Connecting to Data Science Pipelines: {kubeflow_endpoint}')
+  #         client = kfp.Client(
+  #             host=kubeflow_endpoint,
+  #             existing_token=bearer_token,
+  #             ssl_ca_cert=ssl_ca_cert
+  #         )
+
+  #         with open('default_parameters.json') as f:
+  #             default_parameters = json.load(f)
+          
+  #         # start a run
+  #         run_id = client.create_run_from_pipeline_func(
+  #             fraud_training_pipeline,
+  #             arguments=default_parameters,
+  #             experiment_name="fraud-training",
+  #             namespace="mlops-dev-zone",
+  #             enable_caching=False
+  #         )
+
+  #         # wait for the run to finish
+  #         client.wait_for_run_completion(
+  #             run_id=run_id, 
+  #             timeout=7200,
+  #             sleep_duration=5,
+  #         )
+
+
+
+  #         EOF
+  #       command:
+  #       - sh
+  #       - -c
+  #       image: quay.io/rlundber/mlops-ct-cicd:0.1
+  #       volumeMounts:
+  #       - name: kube-api-access
+  #         readOnly: true
+  #         mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+  #       - mountPath: /shared-data
+  #         name: ct-ci-shared
+  #         readOnly: false
+  #     volumes:
+  #     - name: ct-ci-shared
+  #       persistentVolumeClaim:
+  #         claimName: ct-ci-shared
+  #     - name: kube-api-access
+  #       projected:
+  #         sources:
+  #           - serviceAccountToken:
+  #               expirationSeconds: 3607
+  #               path: token
+  #           - configMap:
+  #               name: kube-root-ca.crt
+  #               items:
+  #                 - key: ca.crt
+  #                   path: ca.crt
+  #           - downwardAPI:
+  #               items:
+  #                 - path: namespace
+  #                   fieldRef:
+  #                     apiVersion: v1
+  #                     fieldPath: metadata.namespace
+  #           - configMap:
+  #               name: openshift-service-ca.crt
+  #               items:
+  #                 - key: service-ca.crt
+  #                   path: service-ca.crt
+  #         defaultMode: 420
+  #   runAfter:
+  #   - initialize
