@@ -39,7 +39,8 @@ spec:
         - |
           echo "Downloading data"
           rm -rf /data/card_transaction_data.csv
-          curl --output /data/card_transaction_data.csv https://raw.githubusercontent.com/RHRolun/mlops/main/bootstrap/databases/data/card_transaction_data.csv
+          curl --output /data/card_transaction_data.zip -L https://raw.githubusercontent.com/RHRolun/mlops/main/bootstrap/databases/data/card_transaction_data.zip
+          unzip /data/card_transaction_data.zip
           head /data/card_transaction_data.csv
           echo "Copying into the database"
           psql -h $POSTGRESQL_DATABASE_HOST -p 5432 -U $POSTGRESQL_USER -d $POSTGRESQL_DATABASE -c "\copy transactions.transactions(transaction_id, distance_from_home, distance_from_last_transaction, ratio_to_median_purchase_price, repeat_retailer, used_chip, used_pin_number, online_order, fraud, event_timestamp) FROM '/data/card_transaction_data.csv' WITH (FORMAT csv, HEADER true);"
