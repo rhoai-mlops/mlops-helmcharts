@@ -13,7 +13,7 @@ spec:
   steps:
   - name: execute-ds-pipeline
     workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)/fraud-detection/production
-    image: quay.io/rlundber/mlops-ct-cicd:0.1
+    image: quay.io/rlundber/mlops-ct-cicd:0.4
     command: ["/bin/sh", "-c"]
     args:
     - |
@@ -61,7 +61,7 @@ spec:
       print("wait for the run to finish")
       # wait for the run to finish
       client.wait_for_run_completion(
-          run_id=run_id, 
+          run_id=run_id.run_id, 
           timeout=7200,
           sleep_duration=5,
       )
