@@ -13,7 +13,7 @@ spec:
         - |
           cd /shared-data
           rm -r *
-          git clone https://github.com/RHRolun/mlops-pipeline-garden
+          git clone https://github.com/rhoai-mlops/jukebox
           ls
         command:
         - sh
@@ -34,7 +34,7 @@ spec:
         args:
         - |
           cd /shared-data
-          cd mlops-pipeline-garden/fraud-detection/production
+          cd jukebox/fraud-detection/production
 
           cat << 'EOF' | python3
           from pipeline import fraud_training_pipeline
@@ -99,7 +99,7 @@ spec:
         args:
         - |
           cd /shared-data
-          cd mlops-pipeline-garden/fraud-detection/production
+          cd jukebox/fraud-detection/production
           oc create configmap fraud-training-pipeline --from-file=fraud-training-pipeline.yaml --dry-run=client -o yaml | oc apply -f -
         command:
         - sh

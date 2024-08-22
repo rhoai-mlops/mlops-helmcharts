@@ -16,7 +16,7 @@ spec:
       - name: main
         args:
         - |
-          git clone https://github.com/RHRolun/mlops-model-servers
+          git clone https://github.com/rhoai-mlops/mlops-model-servers
           cd mlops-model-servers
 
           import yaml
