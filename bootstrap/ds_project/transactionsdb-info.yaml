@@ -2,7 +2,7 @@ kind: Secret
 apiVersion: v1
 metadata:
   name: transactionsdb-info
-  namespace: mlops-feature-store
+  namespace: mlops-dev-zone
 data:
   database-name: dHJhbnNhY3Rpb25zZGI=
   database-password: dHJhbnNhY3Rpb25zZGI=
