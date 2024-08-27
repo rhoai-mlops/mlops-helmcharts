@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: mlops-feature-store
-  labels:
-    app: mlops-feature-store
-    argocd.argoproj.io/managed-by: openshift-gitops
-  annotations:
-    openshift.io/display-name: "Feature Store"

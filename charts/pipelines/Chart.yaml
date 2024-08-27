@@ -1,0 +1,10 @@
+---
+apiVersion: v2
+description: A Helm chart for deploying Tekton Pipeline 🐈
+name: tekton
+version: 0.0.1
+home: https://github.com/redhat-cop/helm-charts
+maintainers:
+  - name: RHRolun
+  - name: rcarrata
+  - name: ckavili
