@@ -4,14 +4,23 @@ on:
   push:
     branches:
       - helm-charts
+    paths-ignore:
+      - '.github/**'
+      - 'README.md'
+
+
+# Declare default permissions as read only.
+permissions: read-all
 
 jobs:
   release:
     concurrency: staging_environment
     runs-on: ubuntu-latest
     env:
-      # renovate: datasource=github-releases depName=helm/helm
       HELM_VERSION: v3.15.3
+    permissions:
+      contents: write
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v2
