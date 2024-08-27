@@ -14,7 +14,6 @@ permissions: read-all
 
 jobs:
   release:
-    concurrency: staging_environment
     runs-on: ubuntu-latest
     env:
       HELM_VERSION: v3.15.3
