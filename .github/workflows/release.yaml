@@ -1,0 +1,41 @@
+name: Release Charts
+
+on:
+  push:
+    branches:
+      - helm-charts
+
+jobs:
+  release:
+    concurrency: staging_environment
+    runs-on: ubuntu-latest
+    env:
+      # renovate: datasource=github-releases depName=helm/helm
+      HELM_VERSION: v3.15.3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Fetch history
+        run: git fetch --prune --unshallow
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+    
+      # See https://github.com/helm/chart-releaser-action/issues/6
+      - name: Install Helm
+        uses: azure/setup-helm@fe7b79cd5ee1e45176fcad797de68ecaf3ca4814 # v4.2.0
+        with:
+          version: ${{ env.HELM_VERSION }}
+     
+     - name: Add dependency chart repos
+        run: |
+          helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+          helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
+     
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@a917fd15b20e8b64b94d9158ad54cd6345335584 # v1.6.0
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
