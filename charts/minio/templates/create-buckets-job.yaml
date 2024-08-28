@@ -42,7 +42,7 @@ spec:
       serviceAccount: minio-manage
       serviceAccountName: minio-manage
       containers:
-      - name: create buckets
+      - name: create-buckets
         image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
         imagePullPolicy: IfNotPresent
         command:
