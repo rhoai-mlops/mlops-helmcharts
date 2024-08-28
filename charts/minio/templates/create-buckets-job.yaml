@@ -5,9 +5,6 @@ metadata:
   name: minio-manage
   annotations:
     argocd.argoproj.io/sync-wave: "1"
-    "helm.sh/hook": post-install,post-upgrade
-    "helm.sh/hook-weight": "1"
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -15,9 +12,6 @@ metadata:
   name: minio-manage-rb
   annotations:
     argocd.argoproj.io/sync-wave: "1"
-    "helm.sh/hook": post-install,post-upgrade
-    "helm.sh/hook-weight": "1"
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -41,6 +35,7 @@ spec:
     spec:
       serviceAccount: minio-manage
       serviceAccountName: minio-manage
+      restartPolicy: Never
       containers:
       - name: create-buckets
         image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
@@ -50,14 +45,9 @@ spec:
         - -c
         - |
           echo -n "Waiting for minio pod in {{ .Release.Namespace }} namespace"
-          while [ -z "$(oc get pod -l app=minio -o name 2>/dev/null)" ]; do
-              echo -n '.'
-              sleep 1
-          done
+          oc -n {{ .Release.Namespace }} wait pod -l app=minio --for=condition=Ready --timeout=180s
           echo "Minio pod is running in {{ .Release.Namespace }} namespace"
-          oc rsh `oc get pod -l app=minio -o name`
           {{ range $bucket := .Values.buckets }}
-          mkdir /data/{{ .name }}
+          oc rsh `oc get pod -l app=minio -o name` mkdir /data/{{ .name }}
           echo "🍒{{ $bucket.name }} bucket is created."
           {{- end }}
-
