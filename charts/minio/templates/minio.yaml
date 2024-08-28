@@ -132,7 +132,6 @@ kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
   name: minio-api
-  namespace: mlops-dev-zone
 spec:
   to:
     kind: Service
