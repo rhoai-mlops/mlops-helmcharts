@@ -30,6 +30,19 @@ entries:
     version: 0.0.1
   minio:
   - apiVersion: v2
+    created: "2024-08-28T17:44:47.935665917Z"
+    description: "A Helm chart for minio \U0001F408"
+    digest: 55523c1a3eb273a39a7a8220531c04a9f91df7c9d3adc4ce21c00500a9dab607
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: minio
+    urls:
+    - https://github.com/rhoai-mlops/mlops/releases/download/minio-0.0.2/minio-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
     created: "2024-08-27T12:34:51.62952424Z"
     description: "A Helm chart for minio \U0001F408"
     digest: 8607b36fe5b528266a2d47cb77c7fbe42ef6be7e272f781b13c21e66ccd55959
@@ -70,4 +83,4 @@ entries:
     urls:
     - https://github.com/rhoai-mlops/mlops/releases/download/tekton-0.0.1/tekton-0.0.1.tgz
     version: 0.0.1
-generated: "2024-08-27T12:34:51.884955075Z"
+generated: "2024-08-28T17:44:47.935719648Z"
