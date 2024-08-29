@@ -1,0 +1,4 @@
+---
+name: jukebox
+model_path: models/jukebox
+model_version: onnx_model-0c63901.onnx
