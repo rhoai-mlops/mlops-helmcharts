@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feature-server
+  namespace: mlops-feature-store
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: feature-server
+  template:
+    metadata:
+      labels:
+        app: feature-server
+        name: feature-server
+    spec:
+      initContainers:
+        - name: feature-store-initializer
+          image: python:3.9-slim
+          command: ['sh', '-c', 'cp /config/feature_store.yaml /feature_repo/feature_store.yaml']
+          volumeMounts:
+            - name: feast-info
+              mountPath: /config
+            - name: feature-store-volume
+              mountPath: /feature_repo
+      containers:
+        - name: feature-server
+          image: quay.io/rlundber/feast-server:0.2
+          args: [ -c, /mnt/feature_repo, serve, -h, 0.0.0.0 ]
+          ports:
+            - name: feature-server
+              containerPort: 6566
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          volumeMounts:
+            - mountPath: /mnt/feature_repo
+              name: feature-store-volume
+      volumes:
+        - name: feast-info
+          configMap:
+            name: feast-registry
+        - name: feature-store-volume
+          persistentVolumeClaim:
+            claimName: feature-repo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: feature-server-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: feature-server
+  ports:
+    - protocol: TCP
+      port: 6566
+      targetPort: 6566

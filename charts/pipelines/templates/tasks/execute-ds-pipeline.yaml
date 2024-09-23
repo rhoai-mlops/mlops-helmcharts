@@ -27,7 +27,7 @@ spec:
       cat << 'EOF' | python3
       import kfp
       import json
-      from pipeline import fraud_training_pipeline
+      from production import pipeline
 
       namespace_file_path =\
           '/var/run/secrets/kubernetes.io/serviceaccount/namespace'
@@ -60,10 +60,10 @@ spec:
       # start a run
       print("🏃‍♂️ start a run")
       run_id = client.create_run_from_pipeline_func(
-          fraud_training_pipeline,
+          pipeline,
           arguments=default_parameters,
-          experiment_name="fraud-training",
-          namespace="mlops-dev-zone",
+          experiment_name="music-model-training",
+          namespace="mlops-prod",
           enable_caching=False
       )
 

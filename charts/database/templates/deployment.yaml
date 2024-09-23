@@ -2,16 +2,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mlops-transactionsdb
+  name: mlops-postgresql
 spec:
   selector:
     matchLabels:
-      app: mlops-transactionsdb
+      app: mlops-postgresql
   replicas: 1
   template:
     metadata:
       labels:
-        app: mlops-transactionsdb
+        app: mlops-postgresql
     spec:
       containers:
         - name: postgresql
@@ -42,17 +42,17 @@ spec:
             - name: POSTGRESQL_USER
               valueFrom:
                 secretKeyRef:
-                  name: transactionsdb
+                  name: mlops-postgresql
                   key: database-user
             - name: POSTGRESQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: transactionsdb
+                  name: mlops-postgresql
                   key: database-password
             - name: POSTGRESQL_DATABASE
               valueFrom:
                 secretKeyRef:
-                  name: transactionsdb
+                  name: mlops-postgresql
                   key: database-name
           securityContext:
             capabilities: {}
@@ -64,11 +64,11 @@ spec:
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           volumeMounts:
-            - name: transactionsdb-data
+            - name: mlops-postgresql-data
               mountPath: /var/lib/pgsql/data
       volumes:
-        - name: transactionsdb-data
+        - name: mlops-postgresql-data
           persistentVolumeClaim:
-            claimName: transactionsdb
+            claimName: mlops-postgresql
   strategy:
     type: Recreate
