@@ -1,0 +1,2 @@
+feast==0.36.0
+dask[dataframe]==2024.2.1

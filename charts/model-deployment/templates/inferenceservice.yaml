@@ -3,16 +3,53 @@ apiVersion: serving.kserve.io/v1beta1
 kind: InferenceService
 metadata:
   annotations:
-    openshift.io/display-name: {{ .Values.name }}
-    serving.knative.openshift.io/enablePassthrough: 'true'
-    sidecar.istio.io/inject: 'true'
-    sidecar.istio.io/rewriteAppHTTPProbers: 'true'
+    # openshift.io/display-name: {{ .Values.name }}
+    # serving.knative.openshift.io/enablePassthrough: 'true'
+    # sidecar.istio.io/inject: 'true'
+    # sidecar.istio.io/rewriteAppHTTPProbers: 'true'
+    serving.kserve.io/deploymentMode: RawDeployment
   name: {{ .Values.name }}
   finalizers:
     - inferenceservice.finalizers
   labels:
     opendatahub.io/dashboard: 'true'
 spec:
+  transformer:
+    containers:
+      - args:
+          - '--feast_serving_url'
+          - 'feature-server-service.default.svc.cluster.local:6566'
+          - --'feature_service'
+          - song_properties_fs
+          # - '--entity_id_name'
+          # - music
+          # - '--feature_refs'
+          # - 'song_properties:is_explicit'
+          # - 'song_properties:duration_ms'
+          # - 'song_properties:danceability'
+          # - 'song_properties:energy'
+          # - 'song_properties:key'
+          # - 'song_properties:loudness'
+          # - 'song_properties:mode'
+          # - 'song_properties:speechiness'
+          # - 'song_properties:acousticness'
+          # - 'song_properties:instrumentalness'
+          # - 'song_properties:liveness'
+          # - 'song_properties:valence'
+          # - 'song_properties:tempo'
+        command:
+          - python
+          - '-m'
+          - feast_transformer
+        image: 'quay.io/rlundber/simple-transformer:0.4'
+        name: kserve-container
+        resources:
+          limits:
+            cpu: '1'
+            memory: 2Gi
+          requests:
+            cpu: '1'
+            memory: 2Gi
   predictor:
     maxReplicas: 0
     minReplicas: 1
