@@ -27,7 +27,7 @@ spec:
           - python
           - '-m'
           - music_transformer
-        image: quay.io/rlundber/music_transformer:0.4
+        image: quay.io/rlundber/music_transformer:0.15
         name: kserve-container
         resources:
           limits:
