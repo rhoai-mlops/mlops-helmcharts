@@ -3,10 +3,6 @@ apiVersion: serving.kserve.io/v1beta1
 kind: InferenceService
 metadata:
   annotations:
-    # openshift.io/display-name: {{ .Values.name }}
-    # serving.knative.openshift.io/enablePassthrough: 'true'
-    # sidecar.istio.io/inject: 'true'
-    # sidecar.istio.io/rewriteAppHTTPProbers: 'true'
     serving.kserve.io/deploymentMode: RawDeployment
   name: {{ .Values.name }}
   finalizers:
@@ -17,10 +13,16 @@ spec:
   transformer:
     containers:
       - args:
-          - '--feast_serving_url'
-          - 'feature-server-service.default.svc.cluster.local:6566'
-          - --'feature_service'
-          - song_properties_fs
+        - '--predictor_host'
+        - music-predictor-openmusicai2.apps.dev.rhoai.rh-aiservices-bu.com
+        - '--predictor_protocol'
+        - v2
+        - '--predictor_use_ssl'
+        - 'True'
+          # - '--feast_serving_url'
+          # - 'feature-server-service.default.svc.cluster.local:6566'
+          # - --'feature_service'
+          # - song_properties_fs
           # - '--entity_id_name'
           # - music
           # - '--feature_refs'
@@ -40,8 +42,8 @@ spec:
         command:
           - python
           - '-m'
-          - feast_transformer
-        image: 'quay.io/rlundber/simple-transformer:0.4'
+          - music_transformer
+        image: quay.io/rlundber/music_transformer:0.4
         name: kserve-container
         resources:
           limits:
