@@ -25,21 +25,23 @@ spec:
               mountPath: /feature_repo
       containers:
         - name: feature-server
-          image: quay.io/rlundber/feast-server:0.2
+          image: quay.io/rlundber/feast-server:0.3
           args: [ -c, /mnt/feature_repo, serve, -h, 0.0.0.0 ]
           ports:
             - name: feature-server
               containerPort: 6566
           resources:
             requests:
-              memory: "64Mi"
-              cpu: "250m"
+              memory: 1Gi
+              cpu: 250m
             limits:
-              memory: "128Mi"
-              cpu: "500m"
+              memory: 128Mi
+              cpu: 1Gi
           volumeMounts:
             - mountPath: /mnt/feature_repo
               name: feature-store-volume
+            - mountPath: /.cache
+              name: feature-server-cache
       volumes:
         - name: feast-info
           configMap:
@@ -47,16 +49,6 @@ spec:
         - name: feature-store-volume
           persistentVolumeClaim:
             claimName: feature-repo
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: feature-server-service
-spec:
-  type: LoadBalancer
-  selector:
-    app: feature-server
-  ports:
-    - protocol: TCP
-      port: 6566
-      targetPort: 6566
+        - name: feature-server-cache
+          persistentVolumeClaim:
+            claimName: feature-server-cache
