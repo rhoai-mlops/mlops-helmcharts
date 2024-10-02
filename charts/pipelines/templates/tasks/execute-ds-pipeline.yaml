@@ -18,7 +18,7 @@ spec:
       type: string
   steps:
   - name: execute-ds-pipeline
-    workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)/fraud-detection/production
+    workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)/jukebox/production
     image: quay.io/rlundber/mlops-ct-cicd:0.4
     command: ["/bin/sh", "-c"]
     args:
@@ -62,7 +62,7 @@ spec:
       run_id = client.create_run_from_pipeline_func(
           pipeline,
           arguments=default_parameters,
-          experiment_name="music-model-training",
+          experiment_name="jukebox-model-training",
           namespace="mlops-prod",
           enable_caching=False
       )

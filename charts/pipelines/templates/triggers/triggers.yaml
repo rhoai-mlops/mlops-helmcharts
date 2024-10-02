@@ -12,7 +12,7 @@ spec:
         #   value: (body.ref.event == 'push' && body.ref.split('/')[2] == 'main')
         - name: overlays
           value:
-          - expression: body.head_commit.id.truncate(7)
+          - expression: body.checkout_sha.truncate(7)
             key: truncated_sha
           - expression: body.ref.split('/')[2]
             key: branch_name
