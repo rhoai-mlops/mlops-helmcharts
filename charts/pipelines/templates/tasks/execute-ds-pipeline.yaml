@@ -18,7 +18,7 @@ spec:
       type: string
   steps:
   - name: execute-ds-pipeline
-    workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)/jukebox/production
+    workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)/3-prod_datascience
     image: quay.io/rlundber/mlops-ct-cicd:0.4
     command: ["/bin/sh", "-c"]
     args:
@@ -27,7 +27,7 @@ spec:
       cat << 'EOF' | python3
       import kfp
       import json
-      from production import pipeline
+      from prod_train_save_pipeline import training_pipeline
 
       namespace_file_path =\
           '/var/run/secrets/kubernetes.io/serviceaccount/namespace'
