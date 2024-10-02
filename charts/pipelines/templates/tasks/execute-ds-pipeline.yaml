@@ -60,7 +60,7 @@ spec:
       # start a run
       print("🏃‍♂️ start a run")
       run_id = client.create_run_from_pipeline_func(
-          pipeline,
+          training_pipeline,
           arguments=default_parameters,
           experiment_name="jukebox-model-training",
           namespace="mlops-prod",
