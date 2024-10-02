@@ -2,6 +2,19 @@ apiVersion: v1
 entries:
   database:
   - apiVersion: v2
+    created: "2024-10-02T09:28:14.26313602Z"
+    description: "A Helm chart for transactional database \U0001F3B8"
+    digest: d4a5066c605e19cef0430e68bd443f275310fbd94e43804455d78bd31e4b0e96
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: database
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/database-0.0.2/database-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
     created: "2024-08-27T12:34:51.351322295Z"
     description: "A Helm chart for transactional database \U0001F3B8"
     digest: b08b825c2c227e22c3905d3262b6396761029f231595490ff7905713440b07a3
@@ -16,6 +29,19 @@ entries:
     version: 0.0.1
   feast:
   - apiVersion: v2
+    created: "2024-10-02T09:28:14.379677534Z"
+    description: "A Helm chart for deploying Feast \U0001F60B"
+    digest: 15ca2055052c881bd1ea720a0dda4f04ae297514dcef70f03b389fc6a9725c85
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: feast
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/feast-0.0.2/feast-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
     created: "2024-08-27T12:34:51.4872008Z"
     description: "A Helm chart for deploying Feast \U0001F60B"
     digest: dd8f34c25bbb6e830e0fb94bccd21ef8ba9ff2126efe1dddc6e5d648593a4c9d
@@ -29,6 +55,19 @@ entries:
     - https://github.com/rhoai-mlops/mlops/releases/download/feast-0.0.1/feast-0.0.1.tgz
     version: 0.0.1
   minio:
+  - apiVersion: v2
+    created: "2024-10-02T09:28:14.512330792Z"
+    description: "A Helm chart for minio \U0001F408"
+    digest: f81c0975ab65cd75644f6277bd2568defdfd6d3f71a6ef2a1c1fe05cd1af4c7c
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: minio
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/minio-0.0.7/minio-0.0.7.tgz
+    version: 0.0.7
   - apiVersion: v2
     created: "2024-08-28T18:15:42.690164923Z"
     description: "A Helm chart for minio \U0001F408"
@@ -96,6 +135,19 @@ entries:
     version: 0.0.1
   model-deployment:
   - apiVersion: v2
+    created: "2024-10-02T09:28:14.643940254Z"
+    description: "A Helm chart for model deployments\U0001F319"
+    digest: c80529aae970b8f71ecf866456eb65ef532f3278872191d37dabadc1431c0b0e
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: model-deployment
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/model-deployment-0.0.3/model-deployment-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v2
     created: "2024-08-27T12:34:51.758519987Z"
     description: "A Helm chart for model deployments\U0001F319"
     digest: d3f82bfaebaa367c3d1a53c40095cf2ae2f4a77cba4bd5eb98c1d99eb75b880c
@@ -110,6 +162,19 @@ entries:
     version: 0.0.2
   tekton:
   - apiVersion: v2
+    created: "2024-10-02T09:28:14.750841755Z"
+    description: "A Helm chart for deploying Tekton Pipeline \U0001F408"
+    digest: 804fb77a751b65feec552e552897d1e42e76beee1fbd364deb5e551586db1abb
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: tekton
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/tekton-0.0.2/tekton-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
     created: "2024-08-27T12:34:51.884947851Z"
     description: "A Helm chart for deploying Tekton Pipeline \U0001F408"
     digest: 119dabad2a0a41351fe71a4ce4ae6e517d905629186838d0b59386dc6ac08506
@@ -122,4 +187,4 @@ entries:
     urls:
     - https://github.com/rhoai-mlops/mlops/releases/download/tekton-0.0.1/tekton-0.0.1.tgz
     version: 0.0.1
-generated: "2024-08-28T18:15:42.690191102Z"
+generated: "2024-10-02T09:28:14.750879906Z"
