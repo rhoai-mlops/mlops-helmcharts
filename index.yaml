@@ -162,6 +162,19 @@ entries:
     version: 0.0.2
   tekton:
   - apiVersion: v2
+    created: "2024-10-04T07:28:06.576059024Z"
+    description: "A Helm chart for deploying Tekton Pipeline \U0001F408"
+    digest: e43fac5e26744dab23016ddbebc543e21844b253136fe9ee97f88ddbad58c8ff
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: tekton
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/tekton-0.0.3/tekton-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v2
     created: "2024-10-02T09:28:14.750841755Z"
     description: "A Helm chart for deploying Tekton Pipeline \U0001F408"
     digest: 804fb77a751b65feec552e552897d1e42e76beee1fbd364deb5e551586db1abb
@@ -187,4 +200,4 @@ entries:
     urls:
     - https://github.com/rhoai-mlops/mlops/releases/download/tekton-0.0.1/tekton-0.0.1.tgz
     version: 0.0.1
-generated: "2024-10-02T09:28:14.750879906Z"
+generated: "2024-10-04T07:28:06.576097235Z"
