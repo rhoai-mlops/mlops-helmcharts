@@ -2,7 +2,7 @@
 apiVersion: v2
 description: A little Helm chart for Data Science Pipeline Application 🐈
 name: dspa
-version: 0.0.1
+version: 0.0.2
 home: https://rhoai-mlops.github.io/mlops/
 maintainers:
   - name: RHRolun
