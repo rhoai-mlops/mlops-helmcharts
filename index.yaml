@@ -27,6 +27,20 @@ entries:
     urls:
     - https://github.com/rhoai-mlops/mlops/releases/download/database-0.0.1/database-0.0.1.tgz
     version: 0.0.1
+  dspa:
+  - apiVersion: v2
+    created: "2024-10-04T08:31:33.144028686Z"
+    description: "A little Helm chart for Data Science Pipeline Application \U0001F408"
+    digest: b79cc6515430d89b9d9afae41fb66c469f25752a4fcd121b10426715b73d4aeb
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: dspa
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/dspa-0.0.2/dspa-0.0.2.tgz
+    version: 0.0.2
   feast:
   - apiVersion: v2
     created: "2024-10-02T09:28:14.379677534Z"
@@ -200,4 +214,4 @@ entries:
     urls:
     - https://github.com/rhoai-mlops/mlops/releases/download/tekton-0.0.1/tekton-0.0.1.tgz
     version: 0.0.1
-generated: "2024-10-04T07:28:06.576097235Z"
+generated: "2024-10-04T08:31:33.144066436Z"
