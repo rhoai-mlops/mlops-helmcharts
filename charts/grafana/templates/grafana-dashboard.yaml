@@ -67,6 +67,12 @@ spec:
             "hide": true,
             "iconColor": "rgba(0, 211, 255, 1)",
             "name": "Annotations & Alerts",
+            "target": {
+              "limit": 100,
+              "matchAny": false,
+              "tags": [],
+              "type": "dashboard"
+            },
             "type": "dashboard"
           }
         ]
@@ -74,374 +80,240 @@ spec:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 0,
-      "id": 11,
+      "id": 5,
       "links": [],
+      "liveNow": false,
       "panels": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 0
           },
+          "id": 16,
+          "panels": [],
+          "title": "Model Performance",
+          "type": "row"
+        },
+        {
+          "datasource": {},
+          "description": "Number of requests being processed by the model per second",
           "fieldConfig": {
             "defaults": {
               "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
+                "mode": "thresholds"
               },
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
                     "color": "red",
-                    "value": 80
+                    "value": null
                   }
                 ]
               }
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "RPS"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 0
+            "y": 1
           },
-          "id": 3,
+          "id": 4,
           "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
             },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
           },
+          "pluginVersion": "10.4.3",
           "targets": [
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "czgrlG4Vk"
               },
-              "disableTextWrap": false,
               "editorMode": "code",
-              "expr": "rate(ovms_request_time_us_count{interface=\"REST\"}[5m])",
-              "fullMetaSearch": false,
-              "includeNullMetadata": true,
-              "instant": true,
-              "legendFormat": "__auto",
+              "expr": "sum(rate(ovms_requests_success{method=~\"ModelInfer|Predict\", name=\"$model_name\", version=\"$model_version\", interface=\"$interface\"}[1m]))",
+              "legendFormat": "RPS",
               "range": true,
-              "refId": "A",
-              "useBackend": false
+              "refId": "A"
             }
           ],
-          "title": "OVMS Request Time",
-          "type": "timeseries"
+          "title": "Throughput [RPS]",
+          "type": "gauge"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
+          "datasource": {},
+          "description": "Latency averaged across all requests processed by the model in a certain timeframe",
           "fieldConfig": {
             "defaults": {
               "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
+                "mode": "thresholds"
               },
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "blue",
                     "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
                   }
                 ]
               }
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "mean_latency"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "blue",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 0
-          },
-          "id": 1,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "afc33eb2-ee03-4ff5-870c-772cc190ccd0"
-              },
-              "disableTextWrap": false,
-              "editorMode": "code",
-              "expr": "rate(ovms_inference_time_us_count[5m])",
-              "fullMetaSearch": false,
-              "includeNullMetadata": true,
-              "instant": true,
-              "interval": "",
-              "legendFormat": "__auto",
-              "range": true,
-              "refId": "A",
-              "useBackend": false
-            }
-          ],
-          "title": "OVMS Inference Execution Time ",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 8
-          },
-          "id": 2,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "afc33eb2-ee03-4ff5-870c-772cc190ccd0"
-              },
-              "disableTextWrap": false,
-              "editorMode": "code",
-              "expr": "rate(ovms_requests_success{method=\"ModelInfer\"}[5m])",
-              "fullMetaSearch": false,
-              "includeNullMetadata": true,
-              "instant": true,
-              "legendFormat": "__auto",
-              "range": true,
-              "refId": "A",
-              "useBackend": false
-            }
-          ],
-          "title": "OVMS Requests Success",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 12,
-            "y": 8
+            "y": 1
           },
           "id": 6,
           "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.4.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "czgrlG4Vk"
+              },
+              "editorMode": "code",
+              "expr": "((sum(rate(ovms_request_time_us_sum{name=\"$model_name\", version=\"$model_version\", interface=\"$interface\"}[1m])) / 1000) / sum(rate(ovms_request_time_us_count{name=\"$model_name\", version=\"$model_version\", interface=\"$interface\"}[1m])))",
+              "legendFormat": "mean_latency",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Mean Latency [ms]",
+          "type": "gauge"
+        },
+        {
+          "datasource": {},
+          "description": "Value of latency for quantiles [0.75, 0.90, 0.99], meaning the latency that has NOT been exceeded by 75%, 90% and 99% of the requests",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 9
+          },
+          "id": 19,
+          "options": {
             "legend": {
               "calcs": [],
               "displayMode": "list",
@@ -457,22 +329,295 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
+                "uid": "czgrlG4Vk"
               },
-              "disableTextWrap": false,
               "editorMode": "code",
-              "expr": "rate(ovms_requests_fail[5m])",
-              "fullMetaSearch": false,
-              "includeNullMetadata": true,
-              "instant": true,
-              "legendFormat": "__auto",
+              "expr": "histogram_quantile(0.75, sum by(le) (rate(ovms_request_time_us_bucket{name=\"$model_name\", version=\"$model_version\", interface=\"$interface\"}[1m]))) / 1000",
+              "legendFormat": "quantile==0.75",
               "range": true,
-              "refId": "A",
-              "useBackend": false
+              "refId": "quantile=0.75"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "czgrlG4Vk"
+              },
+              "editorMode": "code",
+              "expr": "histogram_quantile(0.90, sum by (le) (rate(ovms_request_time_us_bucket{name=\"$model_name\", version=\"$model_version\", interface=\"$interface\"}[1m]))) / 1000",
+              "hide": false,
+              "legendFormat": "quantile==0.90",
+              "range": true,
+              "refId": "quantile=0.90"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "czgrlG4Vk"
+              },
+              "editorMode": "code",
+              "expr": "histogram_quantile(0.99, sum by (le) (rate(ovms_request_time_us_bucket{name=\"$model_name\", version=\"$model_version\", interface=\"$interface\"}[1m]))) / 1000",
+              "hide": false,
+              "legendFormat": "quantile==0.99",
+              "range": true,
+              "refId": "quantile=0.99"
             }
           ],
-          "title": "OVMS Requests Failure",
+          "title": "Latency Quantile [ms] (q=0.75, 0.90, 0.99)",
           "type": "timeseries"
+        },
+        {
+          "datasource": {},
+          "description": "Apdex score calculated as:\n(num_samples < 0,t1>  +  num_samples < t1,t2> / 2) / num_samples",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 9
+          },
+          "id": 20,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "czgrlG4Vk"
+              },
+              "editorMode": "code",
+              "expr": "(\r\n  sum(rate(ovms_request_time_us_bucket{le=\"67466\", name=\"$model_name\", version=\"$model_version\", interface=\"$interface\"}[1m])) +\r\n  ((sum(rate(ovms_request_time_us_bucket{le=\"218591\", name=\"$model_name\", version=\"$model_version\", interface=\"$interface\"}[1m])) - \r\n  sum(rate(ovms_request_time_us_bucket{le=\"67466\", name=\"$model_name\", version=\"$model_version\", interface=\"$interface\"}[1m]))) / 2)\r\n) / sum(rate(ovms_request_time_us_count{name=\"$model_name\", version=\"$model_version\", interface=\"$interface\"}[1m]))",
+              "legendFormat": "apdex_score",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Apdex Score ( t1=67ms, t2=218 ms )",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {},
+          "description": "Time of inference execution, averaged across all requests processed by the model in a certain timeframe",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "inference_time"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "blue",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 17
+          },
+          "id": 22,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.4.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "czgrlG4Vk"
+              },
+              "editorMode": "code",
+              "expr": "(sum(rate(ovms_inference_time_us_sum{name=\"$model_name\", version=\"$model_version\"}[1m])) / 1000) / sum(rate(ovms_inference_time_us_count{name=\"$model_name\", version=\"$model_version\"}[1m]))",
+              "legendFormat": "inference_time",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Mean Inference Time [ms]",
+          "type": "gauge"
+        },
+        {
+          "datasource": {},
+          "description": "Time of a request waiting for the inference execution, averaged across all requests processed by the model in a certain timeframe",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "queue_time"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "orange",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 17
+          },
+          "id": 23,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.4.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "czgrlG4Vk"
+              },
+              "editorMode": "code",
+              "expr": "(sum(rate(ovms_wait_for_infer_req_time_us_sum{name=\"$model_name\", version=\"$model_version\"}[1m])) / 1000) / sum(rate(ovms_wait_for_infer_req_time_us_count{name=\"$model_name\", version=\"$model_version\"}[1m]))",
+              "legendFormat": "queue_time",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Mean Time of Request Waiting For Inference [ms]",
+          "type": "gauge"
         }
       ],
       "refresh": "5s",
@@ -483,31 +628,50 @@ spec:
           {
             "current": {
               "selected": false,
-              "text": "Prometheus",
-              "value": "e9688df0-db30-40ea-b3d6-c2d799babfc9"
+              "text": "",
+              "value": ""
             },
             "hide": 0,
-            "includeAll": false,
-            "label": "datasource",
-            "multi": false,
-            "name": "DS_PROMETHEUS",
-            "options": [],
-            "query": "prometheus",
-            "queryValue": "",
-            "refresh": 1,
-            "regex": "",
+            "label": "",
+            "name": "model_name",
+            "options": [
+              {
+                "selected": true,
+                "text": "",
+                "value": ""
+              }
+            ],
+            "query": "",
             "skipUrlSync": false,
-            "type": "datasource"
+            "type": "textbox"
           },
           {
             "current": {
               "selected": false,
+              "text": "",
+              "value": ""
+            },
+            "hide": 0,
+            "name": "model_version",
+            "options": [
+              {
+                "selected": true,
+                "text": "",
+                "value": ""
+              }
+            ],
+            "query": "",
+            "skipUrlSync": false,
+            "type": "textbox"
+          },
+          {
+            "current": {
+              "selected": true,
               "text": "REST",
               "value": "REST"
             },
             "hide": 0,
             "includeAll": false,
-            "label": "interface",
             "multi": false,
             "name": "interface",
             "options": [
@@ -522,7 +686,7 @@ spec:
                 "value": "REST"
               }
             ],
-            "query": "gRPC, REST",
+            "query": "gRPC,REST",
             "queryValue": "",
             "skipUrlSync": false,
             "type": "custom"
@@ -530,13 +694,13 @@ spec:
         ]
       },
       "time": {
-        "from": "now-15m",
+        "from": "now-1h",
         "to": "now"
       },
       "timepicker": {},
-      "timezone": "browser",
-      "title": "OVMS",
-      "uid": "ddw40ut5nycqoa",
-      "version": 7,
+      "timezone": "",
+      "title": "OpenVINO Model Server - Model Metrics",
+      "uid": "Bdb-6G4Vk-github",
+      "version": 1,
       "weekStart": ""
     }
