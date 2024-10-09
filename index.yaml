@@ -81,6 +81,20 @@ entries:
     urls:
     - https://github.com/rhoai-mlops/mlops/releases/download/feast-0.0.1/feast-0.0.1.tgz
     version: 0.0.1
+  jukebox-grafana:
+  - apiVersion: v2
+    created: "2024-10-09T16:53:30.763649388Z"
+    description: "A Helm chart for enable and deploy Jukebox Grafana Dashboard \U0001F4CA"
+    digest: efe1b3e34f9c6bfe5e598f539457581754c8fd5d9c6d47ca6ad6f2077940c2d2
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: jukebox-grafana
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/jukebox-grafana-0.0.1/jukebox-grafana-0.0.1.tgz
+    version: 0.0.1
   minio:
   - apiVersion: v2
     created: "2024-10-02T09:28:14.512330792Z"
@@ -227,4 +241,4 @@ entries:
     urls:
     - https://github.com/rhoai-mlops/mlops/releases/download/tekton-0.0.1/tekton-0.0.1.tgz
     version: 0.0.1
-generated: "2024-10-04T09:54:25.429471816Z"
+generated: "2024-10-09T16:53:30.763681969Z"
