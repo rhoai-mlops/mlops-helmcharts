@@ -77,7 +77,7 @@ class MusicTransformer(kserve.Model):
         self, payload: Union[Dict, InferRequest], headers: Dict[str, str] = None
     ) -> Union[Dict, InferRequest]:
 
-        logger.info("Incoming payload: ", payload)
+        logger.info("Incoming payload: %s", payload)
 
         if isinstance(payload, InferRequest):
             data = self.scaler.transform(payload.inputs[0].data)
@@ -89,7 +89,8 @@ class MusicTransformer(kserve.Model):
             ]
 
         data = np.asarray(data, dtype=np.float32).reshape(payload.inputs[0].shape)
-        logger.info(data.dtype, data.shape, data)
+        logger.info("Data dtype: %s, shape: %s", data.dtype, data.shape)
+        logger.info("Data content: %s", data)
 
         if self.protocol == PredictorProtocol.REST_V1.value:
             inputs = [{"data": d.tolist()} for d in data]
@@ -104,7 +105,6 @@ class MusicTransformer(kserve.Model):
                     data=data,
                 )
             ]
-            logger.info(infer_inputs)
             infer_request = InferRequest(model_name=self.name, infer_inputs=infer_inputs)
             return infer_request
 
