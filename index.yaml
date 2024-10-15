@@ -176,6 +176,19 @@ entries:
     version: 0.0.1
   model-deployment:
   - apiVersion: v2
+    created: "2024-10-15T20:26:54.02181519Z"
+    description: "A Helm chart for model deployments\U0001F319"
+    digest: 458f12fbe09d0afc8e4ba249b17f113691526ff3f2949978107273aef74e3af4
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: model-deployment
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/model-deployment-0.0.4/model-deployment-0.0.4.tgz
+    version: 0.0.4
+  - apiVersion: v2
     created: "2024-10-02T09:28:14.643940254Z"
     description: "A Helm chart for model deployments\U0001F319"
     digest: c80529aae970b8f71ecf866456eb65ef532f3278872191d37dabadc1431c0b0e
@@ -241,4 +254,4 @@ entries:
     urls:
     - https://github.com/rhoai-mlops/mlops/releases/download/tekton-0.0.1/tekton-0.0.1.tgz
     version: 0.0.1
-generated: "2024-10-09T16:53:30.763681969Z"
+generated: "2024-10-15T20:26:54.021870062Z"
