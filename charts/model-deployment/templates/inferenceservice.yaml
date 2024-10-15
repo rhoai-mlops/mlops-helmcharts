@@ -67,5 +67,5 @@ spec:
           memory: 4Gi
       runtime: {{ .Values.name }}
       storage:
-        key: aws-connection-pipeline
+        key: {{ .Values.model_s3_secret | default "aws-connection-models" }}
         path: {{ .Values.model_path }}/{{ .Values.model_version }}
