@@ -1,5 +1,5 @@
 ---
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1	
 kind: TriggerTemplate
 metadata:
   name: ct-trigger-template
@@ -20,7 +20,7 @@ spec:
     - name: git-short-revision
       description: Seven character git sha
   resourcetemplates:
-    - apiVersion: tekton.dev/v1beta1
+    - apiVersion: tekton.dev/v1
       kind: PipelineRun
       metadata:
         generateName: ct-pipeline-
