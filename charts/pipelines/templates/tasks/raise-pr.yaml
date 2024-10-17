@@ -1,5 +1,5 @@
 ---
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: raise-pr
@@ -10,9 +10,49 @@ spec:
     - name: APPLICATION_NAME
       description: Name of the application
       type: string
+    - name: WORK_DIRECTORY
+      description: Directory to start build in (handle multiple branches)
+      type: string
+    - name: DEPLOY_ENVIRONMENT
+      description: Environment to deploy the app
+      type: string
     - name: PROJECT_NAME
-      description: MLOps environment name :)
+      description: Name of the team that doing this exercise :)
       type: string
     - name: VERSION
       description: Version of the application
       type: string
+    - name: REPOSITORY
+      description: Image Repository of the application
+      type: string
+      default: "image-registry.openshift-image-registry.svc:5000"
+  steps:
+    - name: patch-argo-conf
+      workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
+      image: quay.io/redhat-cop/tekton-task-helm:3.6.3
+      script: |
+        #!/bin/sh
+        yq eval -i .applications."$(params.APPLICATION_NAME)".values.version=\"$(params.VERSION)\" "model-deployments/$(params.DEPLOY_ENVIRONMENT)/values.yaml"
+    - name: commit-changes
+      workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
+      image: quay.io/redhat-cop/ubi8-git:latest
+      script: |
+        #!/bin/sh
+        # Commit the changes :P
+        git config --global user.email "tekton@mlops.bot.com"
+        git config --global user.name "🐈 Tekton 🐈"
+        git config --global push.default simple
+        git config --global --add safe.directory '*'
+        git checkout -b $(params.APPLICATION_NAME)-$(params.VERSION)
+        git add model-deployments/$(params.DEPLOY_ENVIRONMENT)/values.yaml
+        git commit -m "🚀 AUTOMATED COMMIT - Deployment of $(params.APPLICATION_NAME) for version $(params.VERSION) 🚀" || rc=$?
+        git remote set-url origin $(cat $HOME/.git-credentials)/$(params.PROJECT_NAME)/mlops-gitops.git
+        git push -u origin main
+    - name: raise-pr
+      workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
+      image: quay.io/redhat-cop/ubi8-git:latest
+      script: |
+        #!/bin/sh
+        curl --request POST --header "PRIVATE-TOKEN: <your-access-token>" \
+        --data "source_branch=$(params.APPLICATION_NAME)-$(params.VERSION)&target_branch=main&title=🔥$(params.APPLICATION_NAME):$(params.VERSION)-deployment" \
+        "$(cat $HOME/.git-credentials)/api/v4/projects/<project-id>/merge_requests"
