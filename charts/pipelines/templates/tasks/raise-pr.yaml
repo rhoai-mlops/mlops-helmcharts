@@ -1,0 +1,18 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: raise-pr
+spec:
+  workspaces:
+    - name: output
+  params:
+    - name: APPLICATION_NAME
+      description: Name of the application
+      type: string
+    - name: PROJECT_NAME
+      description: MLOps environment name :)
+      type: string
+    - name: VERSION
+      description: Version of the application
+      type: string

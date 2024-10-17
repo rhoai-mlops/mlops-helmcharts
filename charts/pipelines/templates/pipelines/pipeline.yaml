@@ -6,8 +6,12 @@ metadata:
 spec:
   workspaces:
     - name: shared-workspace
+    - name: model-workspace
   params:
     - name: APPLICATION_NAME
+      type: string
+      default: ""
+    - name: PROJECT_NAME
       type: string
       default: ""
     - name: GIT_URL
@@ -53,10 +57,30 @@ spec:
           workspace: shared-workspace
       params:
         - name: WORK_DIRECTORY
-          value: "$(params.APPLICATION_NAME)/$(params.GIT_BRANCH)"
+          value: "$(params.APPLICATION_NAME)/$(params.GIT_BRANCH)/3-prod_datascience"
         - name: APPLICATION_NAME
           value: "$(params.APPLICATION_NAME)"
         - name: GIT_SHORT_REVISION
           value: "$(params.GIT_SHORT_REVISION)"
       runAfter:
         - fetch-ds-pipeline-repository
+
+# ModelCar step
+    - name: build-modelcar
+      taskRef:
+        name: build-modelcar
+        kind: Task
+      runAfter:
+        - execute-ds-pipeline
+      workspaces:
+        - name: output
+          workspace: model-workspace
+      params:
+        - name: APPLICATION_NAME
+          value: "$(params.APPLICATION_NAME)"
+        - name: VERSION
+          value: "$(params.GIT_SHORT_REVISION)"
+        - name: PROJECT_NAME
+          value: {{ .Values.team_name }}
+
+# Raise PR for deployment 

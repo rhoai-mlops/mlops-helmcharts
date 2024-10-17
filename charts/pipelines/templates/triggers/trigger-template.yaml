@@ -44,3 +44,6 @@ spec:
         - name: shared-workspace
           persistentVolumeClaim:
             claimName: shared-workspace
+        - name: model-workspace
+          persistentVolumeClaim:
+            claimName: jukebox-model-pvc
