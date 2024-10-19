@@ -3,47 +3,35 @@ apiVersion: serving.kserve.io/v1beta1
 kind: InferenceService
 metadata:
   annotations:
-    serving.kserve.io/deploymentMode: RawDeployment
+    openshift.io/display-name: {{ .Values.name }}
+    serving.knative.openshift.io/enablePassthrough: 'true'
+    sidecar.istio.io/inject: 'true'
+    sidecar.istio.io/rewriteAppHTTPProbers: 'true'
   name: {{ .Values.name }}
   finalizers:
     - inferenceservice.finalizers
   labels:
+    networking.knative.dev/visibility: cluster-local
     opendatahub.io/dashboard: 'true'
 spec:
   transformer:
     containers:
       - args:
         - '--predictor_host'
-        - music-predictor-openmusicai2.apps.dev.rhoai.rh-aiservices-bu.com
+        - {{ .Values.name }}-predictor.$(NAMESPACE).svc.cluster.local:8888
         - '--predictor_protocol'
         - v2
         - '--predictor_use_ssl'
-        - 'True'
-          # - '--feast_serving_url'
-          # - 'feature-server-service.default.svc.cluster.local:6566'
-          # - --'feature_service'
-          # - song_properties_fs
-          # - '--entity_id_name'
-          # - music
-          # - '--feature_refs'
-          # - 'song_properties:is_explicit'
-          # - 'song_properties:duration_ms'
-          # - 'song_properties:danceability'
-          # - 'song_properties:energy'
-          # - 'song_properties:key'
-          # - 'song_properties:loudness'
-          # - 'song_properties:mode'
-          # - 'song_properties:speechiness'
-          # - 'song_properties:acousticness'
-          # - 'song_properties:instrumentalness'
-          # - 'song_properties:liveness'
-          # - 'song_properties:valence'
-          # - 'song_properties:tempo'
+        - 'False'
+        - '--scaler_file_path'
+        - '{{ .Values.model_path }}/{{ .Values.model_version }}/artifacts/scaler.pkl'
+        - '--encoder_file_path'
+        - '{{ .Values.model_path }}/{{ .Values.model_version }}/artifacts/label_encoder.pkl'
         command:
           - python
           - '-m'
           - music_transformer
-        image: quay.io/rlundber/music_transformer:0.4
+        image: quay.io/rlundber/feast_music_transformer:0.1
         name: kserve-container
         resources:
           limits:
@@ -52,6 +40,14 @@ spec:
           requests:
             cpu: '1'
             memory: 2Gi
+        env:
+          - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+        envFrom:
+          - secretRef:
+            name: {{ .Values.model_s3_secret }}
   predictor:
     maxReplicas: 0
     minReplicas: 1
@@ -69,5 +65,5 @@ spec:
           memory: 4Gi
       runtime: {{ .Values.name }}
       storage:
-        key: {{ .Values.model_s3_secret | default "aws-connection-models" }}
+        key: {{ .Values.model_s3_secret }}
         path: {{ .Values.model_path }}/{{ .Values.model_version }}

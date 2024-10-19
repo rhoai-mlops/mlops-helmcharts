@@ -1,3 +1,5 @@
 kserve==0.12.1
 requests>=2.22.0
 numpy>=1.16.3
+pyarrow==17.0.0
+scikit-learn==1.4.2
