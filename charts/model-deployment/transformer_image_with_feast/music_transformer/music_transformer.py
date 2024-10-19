@@ -95,7 +95,7 @@ class MusicTransformer(kserve.Model):
             "feature_service": self.feature_service,
             "entities": entities
         }
-        response = requests.post(self.feast_server_url, json=json_data, verify=False)
+        response = requests.post(f"{self.feast_server_url}/get-online-features", json=json_data, verify=False)
         logger.info("feast response status is %s", response.status_code)
         logger.info("feast response headers %s", response.headers)
         response_dict = response.json()
@@ -154,14 +154,14 @@ class MusicTransformer(kserve.Model):
             ]
 
         logger.info("Data content: %s", data)
-        logger.info("Data dtype: %s, shape: %s", data.dtype, data.shape)
 
-        feature_dict = self.request_features(entities=data)
+        feature_dict = self.request_features(entities=np.array(data).flatten().tolist())
         features = self.extract_features(feature_dict)
+        logger.info("Features: %s", features)
         
         data = self.scaler.transform(features)
 
-        data = np.asarray(data, dtype=np.float32).reshape(payload.inputs[0].shape)
+        data = np.asarray(data, dtype=np.float32).reshape(payload.inputs[0].shape[0], -1)
 
         if self.protocol == PredictorProtocol.REST_V1.value:
             inputs = [{"data": d.tolist()} for d in data]

@@ -29,6 +29,12 @@ parser.add_argument(
     help="Feature Service mapping to the relevant features for the model.",
     required=True,
 )
+parser.add_argument(
+    "--entity_id_name",
+    type=str,
+    help="Name of the entity id we want to fetch.",
+    required=True,
+)
 
 args, _ = parser.parse_known_args()
 
@@ -42,6 +48,7 @@ if __name__ == "__main__":
         encoder_file_path=args.encoder_file_path,
         feast_server_url=args.feast_server_url,
         feature_service=args.feature_service,
+        entity_id_name=args.entity_id_name,
     )
     server = kserve.ModelServer()
     server.start(models=[transformer])

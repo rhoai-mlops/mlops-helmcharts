@@ -27,11 +27,17 @@ spec:
         - '{{ .Values.model_path }}/{{ .Values.model_version }}/artifacts/scaler.pkl'
         - '--encoder_file_path'
         - '{{ .Values.model_path }}/{{ .Values.model_version }}/artifacts/label_encoder.pkl'
+        - '--feast_server_url'
+        - {{ .Values.feast_server_url }}
+        - '--feature_service'
+        - {{ .Values.feature_service }}
+        - '--entity_id_name'
+        - {{ .Values.entity_id_name }}
         command:
           - python
           - '-m'
           - music_transformer
-        image: quay.io/rlundber/feast_music_transformer:0.1
+        image: quay.io/rlundber/feast_music_transformer:0.4
         name: kserve-container
         resources:
           limits:
