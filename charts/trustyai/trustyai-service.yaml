@@ -1,3 +1,4 @@
+---
 apiVersion: trustyai.opendatahub.io/v1alpha1
 kind: TrustyAIService
 metadata:
