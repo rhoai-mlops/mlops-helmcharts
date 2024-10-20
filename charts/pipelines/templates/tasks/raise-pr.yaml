@@ -53,6 +53,13 @@ spec:
       image: quay.io/redhat-cop/ubi8-git:latest
       script: |
         #!/bin/sh
-        curl --request POST --header "PRIVATE-TOKEN: <your-access-token>" \
-        --data "source_branch=$(params.APPLICATION_NAME)-$(params.VERSION)&target_branch=main&title=🔥$(params.APPLICATION_NAME):$(params.VERSION)-deployment" \
-        "$(cat $HOME/.git-credentials)/api/v4/projects/<project-id>/merge_requests"
+        curl -X 'POST' \
+          '$(cat $HOME/.git-credentials)/api/v1/repos/$(params.PROJECT_NAME)/$(params.APPLICATION_NAME)/pulls?token=<your-access-token>' \
+          -H 'accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -d '{
+          "base": "main",
+          "body": "Experiment results can be found...",
+          "head": "$(params.APPLICATION_NAME)-$(params.VERSION)",
+          "title": "🔥Model $(params.APPLICATION_NAME):$(params.VERSION) Deployment🔥"
+        }'
