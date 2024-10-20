@@ -1,0 +1,40 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-modelcar
+spec:
+  workspaces:
+    - name: output
+  params:
+    - name: APPLICATION_NAME
+      description: Name of the application
+      type: string
+    - name: PROJECT_NAME
+      description: MLOps environment name :)
+      type: string
+    - name: VERSION
+      description: Version of the application
+      type: string
+  steps:
+    - name: create-dockerfile
+      workingDir: $(workspaces.output.path)
+      image: quay.io/openshift/origin-cli:4.14
+      script: |
+        #!/bin/sh
+        cat <<EOF > Dockerfile
+        FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4
+        WORKDIR /models/1
+        RUN mkdir -p /models/1/artifacts
+        COPY $(params.APPLICATION_NAME).onnx .
+        COPY artifacts/ artifacts/
+        USER 1001
+        EOF
+    - name: openshift-build
+      workingDir: $(workspaces.output.path)
+      image: quay.io/openshift/origin-cli:4.14
+      script: |
+        #!/bin/sh
+        oc new-build --binary --name=$(params.APPLICATION_NAME) -l app=$(params.APPLICATION_NAME) -l app.kubernetes.io/name=$(params.APPLICATION_NAME) --strategy=docker || rc=$?
+        oc start-build $(params.APPLICATION_NAME) --from-dir=. --follow --wait
+        oc tag $(params.PROJECT_NAME)-mlops/$(params.APPLICATION_NAME):latest $(params.PROJECT_NAME)-test/$(params.APPLICATION_NAME):$(params.VERSION)

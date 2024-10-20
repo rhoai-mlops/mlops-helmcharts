@@ -1,5 +1,0 @@
----
-name: jukebox
-model_path: models/jukebox
-model_version: 1
-model_s3_secret: aws-connection-models
