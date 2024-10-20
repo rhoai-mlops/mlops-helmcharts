@@ -37,9 +37,4 @@ spec:
         #!/bin/sh
         oc new-build --binary --name=$(params.APPLICATION_NAME) -l app=$(params.APPLICATION_NAME) -l app.kubernetes.io/name=$(params.APPLICATION_NAME) --strategy=docker || rc=$?
         oc start-build $(params.APPLICATION_NAME) --from-dir=. --follow --wait
-    - name: tag-image
-      workingDir: $(workspaces.output.path)
-      image: quay.io/openshift/origin-cli:4.12
-      script: |
-        #!/bin/sh
         oc tag $(params.PROJECT_NAME)-mlops/$(params.APPLICATION_NAME):latest $(params.PROJECT_NAME)-test/$(params.APPLICATION_NAME):$(params.VERSION)

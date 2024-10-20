@@ -12,7 +12,7 @@ spec:
         #   value: (body.ref.event == 'push' && body.ref.split('/')[2] == 'main')
         - name: overlays
           value:
-          - expression: body.checkout_sha.truncate(7)
+          - expression: body.head_commit.id.truncate(7)
             key: truncated_sha
           - expression: body.ref.split('/')[2]
             key: branch_name
@@ -24,7 +24,7 @@ spec:
     - name: git-revision
       value: $(body.head_commit.id)
     - name: gitrepositoryurl
-      value: $(body.project.git_http_url)
+      value: $(body.repository.original_url)
     - name: git-repo-name
       value: $(body.repository.name)
     - name: git-ref
