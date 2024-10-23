@@ -83,4 +83,44 @@ spec:
         - name: PROJECT_NAME
           value: {{ .Values.USER_NAME }}
 
+# Fetch GitOps repository
+    - name: fetch-gitops-repository
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: "https://{{ .Values.git_server }}/{{ .Values.USER_NAME }}/mlops-gitops.git"
+        - name: revision
+          value: "main"
+        - name: subdirectory
+          value: "mlops-gitops/main"
+        - name: deleteExisting
+          value: "true"
+        - name: sslVerify
+          value: "false"
+
 # Raise PR for deployment 
+    - name: deploy-test
+      taskRef:
+        name: deploy-or-raise-pr
+        kind: Task
+      runAfter:
+        - build-modelcar
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: APPLICATION_NAME
+          value: "$(params.APPLICATION_NAME)"
+        - name: VERSION
+          value: "$(params.GIT_SHORT_REVISION)"
+        - name: WORK_DIRECTORY
+          value: "mlops-gitops/main/model-deployment/"
+        - name: DEPLOY_ENVIRONMENT
+          value: "test"
+        - name: PROJECT_NAME
+          value: {{ .Values.USER_NAME }}

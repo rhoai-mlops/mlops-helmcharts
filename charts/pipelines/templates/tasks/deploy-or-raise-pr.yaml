@@ -2,7 +2,7 @@
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
-  name: raise-pr
+  name: deploy-or-raise-pr
 spec:
   workspaces:
     - name: output
@@ -53,13 +53,15 @@ spec:
       image: quay.io/redhat-cop/ubi8-git:latest
       script: |
         #!/bin/sh
-        curl -X 'POST' \
-          '$(cat $HOME/.git-credentials)/api/v1/repos/$(params.PROJECT_NAME)/$(params.APPLICATION_NAME)/pulls?token=<your-access-token>' \
-          -H 'accept: application/json' \
-          -H 'Content-Type: application/json' \
-          -d '{
-          "base": "main",
-          "body": "Experiment results can be found...",
-          "head": "$(params.APPLICATION_NAME)-$(params.VERSION)",
-          "title": "🔥Model $(params.APPLICATION_NAME):$(params.VERSION) Deployment🔥"
-        }'
+        if [[ $(params.DEPLOY_ENVIRONMENT) == "prod" ]]; then
+          curl -X 'POST' \
+            '$(cat $HOME/.git-credentials)/api/v1/repos/$(params.PROJECT_NAME)/$(params.APPLICATION_NAME)/pulls?token=<your-access-token>' \
+            -H 'accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -d '{
+            "base": "main",
+            "body": "Experiment results can be found...",
+            "head": "$(params.APPLICATION_NAME)-$(params.VERSION)",
+            "title": "🔥Model $(params.APPLICATION_NAME):$(params.VERSION) Deployment🔥"
+          }'
+        fi
