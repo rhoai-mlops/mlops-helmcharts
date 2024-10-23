@@ -1,0 +1,4 @@
+# override in argo
+operator: true
+# override in argo
+ignoreHelmHooks: true

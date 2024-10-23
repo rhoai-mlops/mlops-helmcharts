@@ -3,11 +3,15 @@ apiVersion: serving.kserve.io/v1beta1
 kind: InferenceService
 metadata:
   annotations:
-    serving.kserve.io/deploymentMode: RawDeployment
+    openshift.io/display-name: {{ .Values.name }}
+    serving.knative.openshift.io/enablePassthrough: 'true'
+    sidecar.istio.io/inject: 'true'
+    sidecar.istio.io/rewriteAppHTTPProbers: 'true'
   name: {{ .Values.name }}
   finalizers:
     - inferenceservice.finalizers
   labels:
+    networking.knative.dev/visibility: cluster-local
     opendatahub.io/dashboard: 'true'
 spec:
   transformer:
@@ -27,7 +31,7 @@ spec:
           - python
           - '-m'
           - music_transformer
-        image: quay.io/rlundber/music_transformer:0.15
+        image: quay.io/rlundber/music_transformer:0.16
         name: kserve-container
         resources:
           limits:
