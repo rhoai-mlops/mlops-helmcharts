@@ -81,10 +81,6 @@ spec:
         - name: VERSION
           value: "$(params.GIT_SHORT_REVISION)"
         - name: PROJECT_NAME
-<<<<<<< HEAD
           value: {{ .Values.USER_NAME }}
-=======
-          value: {{ .Values.team_name }}
->>>>>>> d447056fb935f1b9d30f005f03a60fe7b75f30ca
 
 # Raise PR for deployment 
