@@ -65,7 +65,7 @@ spec:
           arguments=default_parameters,
           experiment_name="jukebox-model-training",
           namespace="mlops-prod",
-          enable_caching=False
+          enable_caching=True
       )
 
       print("🥱 wait for the run to finish")
