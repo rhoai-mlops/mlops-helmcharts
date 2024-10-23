@@ -102,6 +102,8 @@ spec:
           value: "true"
         - name: sslVerify
           value: "false"
+      runAfter:
+        - build-modelcar
 
 # Raise PR for deployment 
     - name: deploy-test
@@ -109,7 +111,7 @@ spec:
         name: deploy-or-raise-pr
         kind: Task
       runAfter:
-        - build-modelcar
+        - fetch-gitops-repository
       workspaces:
         - name: output
           workspace: shared-workspace
@@ -119,7 +121,7 @@ spec:
         - name: VERSION
           value: "$(params.GIT_SHORT_REVISION)"
         - name: WORK_DIRECTORY
-          value: "mlops-gitops/main/model-deployment/"
+          value: "mlops-gitops/main/model-deployments/"
         - name: DEPLOY_ENVIRONMENT
           value: "test"
         - name: PROJECT_NAME

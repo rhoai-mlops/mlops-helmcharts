@@ -32,7 +32,7 @@ spec:
       image: quay.io/redhat-cop/tekton-task-helm:3.6.3
       script: |
         #!/bin/sh
-        yq eval -i .applications."$(params.APPLICATION_NAME)".values.version=\"$(params.VERSION)\" "model-deployments/$(params.DEPLOY_ENVIRONMENT)/values.yaml"
+        yq eval -i .applications."$(params.APPLICATION_NAME)".values.version=\"$(params.VERSION)\" "$(params.DEPLOY_ENVIRONMENT)/values.yaml"
     - name: commit-changes
       workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
       image: quay.io/redhat-cop/ubi8-git:latest
@@ -44,7 +44,7 @@ spec:
         git config --global push.default simple
         git config --global --add safe.directory '*'
         git checkout -b $(params.APPLICATION_NAME)-$(params.VERSION)
-        git add model-deployments/$(params.DEPLOY_ENVIRONMENT)/values.yaml
+        git add $(params.DEPLOY_ENVIRONMENT)/values.yaml
         git commit -m "🚀 AUTOMATED COMMIT - Deployment of $(params.APPLICATION_NAME) for version $(params.VERSION) 🚀" || rc=$?
         git remote set-url origin $(cat $HOME/.git-credentials)/$(params.PROJECT_NAME)/mlops-gitops.git
         git push -u origin main
