@@ -1,0 +1,66 @@
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: deploy-or-raise-pr
+spec:
+  workspaces:
+    - name: output
+  params:
+    - name: APPLICATION_NAME
+      description: Name of the application
+      type: string
+    - name: WORK_DIRECTORY
+      description: Directory to start build in (handle multiple branches)
+      type: string
+    - name: DEPLOY_ENVIRONMENT
+      description: Environment to deploy the app
+      type: string
+    - name: PROJECT_NAME
+      description: Name of the team that doing this exercise :)
+      type: string
+    - name: VERSION
+      description: Version of the application
+      type: string
+    - name: REPOSITORY
+      description: Image Repository of the application
+      type: string
+      default: "image-registry.openshift-image-registry.svc:5000"
+  steps:
+    - name: patch-argo-conf
+      workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
+      image: quay.io/redhat-cop/tekton-task-helm:3.6.3
+      script: |
+        #!/bin/sh
+        yq eval -i .applications."$(params.APPLICATION_NAME)".values.version=\"$(params.VERSION)\" "$(params.DEPLOY_ENVIRONMENT)/values.yaml"
+    - name: commit-changes
+      workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
+      image: quay.io/redhat-cop/ubi8-git:latest
+      script: |
+        #!/bin/sh
+        # Commit the changes :P
+        git config --global user.email "tekton@mlops.bot.com"
+        git config --global user.name "🐈 Tekton 🐈"
+        git config --global push.default simple
+        git config --global --add safe.directory '*'
+        git add $(params.DEPLOY_ENVIRONMENT)/values.yaml
+        git commit -m "🚀 AUTOMATED COMMIT - Deployment of $(params.APPLICATION_NAME) for version $(params.VERSION) 🚀" || rc=$?
+        git remote set-url origin $(cat $HOME/.git-credentials)/$(params.PROJECT_NAME)/mlops-gitops.git
+        git push origin HEAD:main
+    - name: raise-pr
+      workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
+      image: quay.io/redhat-cop/ubi8-git:latest
+      script: |
+        #!/bin/sh
+        if [[ $(params.DEPLOY_ENVIRONMENT) == "prod" ]]; then
+          curl -X 'POST' \
+            '$(cat $HOME/.git-credentials)/api/v1/repos/$(params.PROJECT_NAME)/$(params.APPLICATION_NAME)/pulls?token=<your-access-token>' \
+            -H 'accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -d '{
+            "base": "main",
+            "body": "Experiment results can be found...",
+            "head": "$(params.APPLICATION_NAME)-$(params.VERSION)",
+            "title": "🔥Model $(params.APPLICATION_NAME):$(params.VERSION) Deployment🔥"
+          }'
+        fi

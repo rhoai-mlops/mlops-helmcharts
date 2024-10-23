@@ -1,0 +1,28 @@
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  annotations:
+    serving.kserve.io/deploymentMode: RawDeployment
+  name: {{ .Values.name }}
+  finalizers:
+    - inferenceservice.finalizers
+  labels:
+    opendatahub.io/dashboard: 'true'
+spec:
+  predictor:
+    maxReplicas: 0
+    minReplicas: 1
+    model:
+      modelFormat:
+        name: onnx
+      storageUri: oci://{{ .Values.image_registry | default "image-registry.openshift-image-registry.svc:5000" }}/{{ .Release.Namespace }}/{{ .Values.name }}:{{ .Values.version }}
+      name: ''
+      resources:
+        limits:
+          cpu: '2'
+          memory: 8Gi
+        requests:
+          cpu: '1'
+          memory: 4Gi
+      runtime: {{ .Values.name }}

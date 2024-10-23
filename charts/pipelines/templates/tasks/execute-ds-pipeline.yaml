@@ -18,7 +18,7 @@ spec:
       type: string
   steps:
   - name: execute-ds-pipeline
-    workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)/3-prod_datascience
+    workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
     image: quay.io/rlundber/mlops-ct-cicd:0.4
     command: ["/bin/sh", "-c"]
     args:
@@ -56,6 +56,7 @@ spec:
       
       default_parameters['version'] = "$(params.GIT_SHORT_REVISION)"
       default_parameters['model_name'] = "$(params.APPLICATION_NAME)"
+      default_parameters['model_storage_pvc'] = "jukebox-model-pvc"
 
       # start a run
       print("🏃‍♂️ start a run")
@@ -64,7 +65,7 @@ spec:
           arguments=default_parameters,
           experiment_name="jukebox-model-training",
           namespace="mlops-prod",
-          enable_caching=False
+          enable_caching=True
       )
 
       print("🥱 wait for the run to finish")
