@@ -43,7 +43,6 @@ spec:
         git config --global user.name "🐈 Tekton 🐈"
         git config --global push.default simple
         git config --global --add safe.directory '*'
-        # git checkout -b $(params.APPLICATION_NAME)-$(params.VERSION)
         git add $(params.DEPLOY_ENVIRONMENT)/values.yaml
         git commit -m "🚀 AUTOMATED COMMIT - Deployment of $(params.APPLICATION_NAME) for version $(params.VERSION) 🚀" || rc=$?
         git remote set-url origin $(cat $HOME/.git-credentials)/$(params.PROJECT_NAME)/mlops-gitops.git
