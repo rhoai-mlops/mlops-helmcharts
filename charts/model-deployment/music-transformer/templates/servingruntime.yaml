@@ -18,7 +18,7 @@ spec:
     prometheus.io/port: '8888'
   containers:
     - args:
-        - '--model_name={{.Name}}'
+        - '--model_name={{ .Values.name }}'
         - '--port=8001'
         - '--rest_port=8888'
         - '--model_path=/mnt/models'

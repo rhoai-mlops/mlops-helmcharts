@@ -18,15 +18,15 @@ spec:
     containers:
       - args:
         - '--predictor_host'
-        - {{ .Values.name }}-predictor.$(NAMESPACE).svc.cluster.local:8888
+        - {{ .Values.name }}-predictor.{{ .Release.Namespace }}.svc.cluster.local:8888
         - '--predictor_protocol'
         - v2
         - '--predictor_use_ssl'
         - 'False'
         - '--scaler_file_path'
-        - '{{ .Values.model_path }}/{{ .Values.model_version }}/artifacts/scaler.pkl'
+        - 'models/{{ .Values.name }}/1/artifacts/scaler.pkl'
         - '--encoder_file_path'
-        - '{{ .Values.model_path }}/{{ .Values.model_version }}/artifacts/label_encoder.pkl'
+        - ''models/{{ .Values.name }}/1/artifacts/label_encoder.pkl'
         - '--feast_server_url'
         - {{ .Values.feast_server_url }}
         - '--feature_service'
