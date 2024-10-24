@@ -1,8 +1,8 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: feature-server
-  namespace: mlops-feature-store
 spec:
   replicas: 1
   selector:
@@ -47,16 +47,3 @@ spec:
         - name: feature-store-volume
           persistentVolumeClaim:
             claimName: feature-repo
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: feature-server-service
-spec:
-  type: LoadBalancer
-  selector:
-    app: feature-server
-  ports:
-    - protocol: TCP
-      port: 6566
-      targetPort: 6566

@@ -1,8 +1,8 @@
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: feast-registry
-  namespace: mlops-feature-store
 data:
   feature_store.yaml: |  
     project: feast_from_file
@@ -10,7 +10,7 @@ data:
     registry:
         registry_store_type: PostgreSQLRegistryStore
         path: feast_registry
-        host: feast.mlops-feature-store.svc.cluster.local
+        host: feast.{{ .Release.Namespace }}.svc.cluster.local
         port: 5432
         database: feast
         db_schema: feast
@@ -18,7 +18,7 @@ data:
         password: feast
     online_store:
         type: postgres
-        host: feast.mlops-feature-store.svc.cluster.local
+        host: feast.{{ .Release.Namespace }}.svc.cluster.local
         port: 5432
         database: feast
         db_schema: feast
