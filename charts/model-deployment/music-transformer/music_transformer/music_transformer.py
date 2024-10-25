@@ -45,32 +45,21 @@ class MusicTransformer(kserve.Model):
         logger.info("Scaler file path = %s", scaler_file_path)
         logger.info("Encoder file path = %s", encoder_file_path)
 
-        self.fs = self.setup_s3_filesystem()
         self.scaler = self.load_scaler()
         self.label_encoder = self.load_label_encoder()
 
         self.ready = True
 
-    def setup_s3_filesystem(self):
-        fs = pyarrow.fs.S3FileSystem(
-            endpoint_override=os.environ.get('AWS_S3_ENDPOINT'),
-            access_key=os.environ.get('AWS_ACCESS_KEY_ID'),
-            secret_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
-        )
-        return fs
-
     def load_scaler(self):
-        path = f"{os.environ.get('AWS_S3_BUCKET')}/{self.scaler_file_path}"
-        with self.fs.open_input_file(path) as file:
+        with open(self.scaler_file_path, 'rb') as file:
             scaler = pickle.load(file)
-        logger.info(f"Scaler loaded from {path}")
+        logger.info(f"Scaler loaded from {self.scaler_file_path}")
         return scaler
     
     def load_label_encoder(self):
-        path = f"{os.environ.get('AWS_S3_BUCKET')}/{self.encoder_file_path}"
-        with self.fs.open_input_file(path) as file:
+        with open(self.encoder_file_path, 'rb') as file:
             label_encoder = pickle.load(file)
-        logger.info(f"Label encoder loaded from {path}")
+        logger.info(f"Label encoder loaded from {self.encoder_file_path}")
         return label_encoder
 
     def preprocess(

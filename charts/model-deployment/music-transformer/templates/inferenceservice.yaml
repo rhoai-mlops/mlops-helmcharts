@@ -1,69 +1,67 @@
-# ---
-# apiVersion: serving.kserve.io/v1beta1
-# kind: InferenceService
-# metadata:
-#   annotations:
-#     openshift.io/display-name: {{ .Values.name }}
-#     serving.knative.openshift.io/enablePassthrough: 'true'
-#     sidecar.istio.io/inject: 'true'
-#     sidecar.istio.io/rewriteAppHTTPProbers: 'true'
-#   name: {{ .Values.name }}
-#   finalizers:
-#     - inferenceservice.finalizers
-#   labels:
-#     networking.knative.dev/visibility: cluster-local
-#     opendatahub.io/dashboard: 'true'
-# spec:
-#   transformer:
-#     containers:
-#       - args:
-#         - '--predictor_host'
-#         - {{ .Values.name }}-predictor.{{ .Release.Namespace }}.svc.cluster.local:8888
-#         - '--predictor_protocol'
-#         - v2
-#         - '--predictor_use_ssl'
-#         - 'False'
-#         - '--scaler_file_path'
-#         - '{{ .Values.model_path }}/{{ .Values.model_version }}/artifacts/scaler.pkl'
-#         - '--encoder_file_path'
-#         - '{{ .Values.model_path }}/{{ .Values.model_version }}/artifacts/label_encoder.pkl'
-#         command:
-#           - python
-#           - '-m'
-#           - music_transformer
-#         image: quay.io/rlundber/music_transformer:0.16
-#         name: kserve-container
-#         resources:
-#           limits:
-#             cpu: '1'
-#             memory: 2Gi
-#           requests:
-#             cpu: '1'
-#             memory: 2Gi
-#         env:
-#           - name: NAMESPACE
-#               valueFrom:
-#                 fieldRef:
-#                   fieldPath: metadata.namespace
-#         envFrom:
-#           - secretRef:
-#             name: {{ .Values.model_s3_secret }}
-#   predictor:
-#     maxReplicas: 0
-#     minReplicas: 1
-#     model:
-#       modelFormat:
-#         name: onnx
-#         version: '1'
-#       name: ''
-#       resources:
-#         limits:
-#           cpu: '2'
-#           memory: 8Gi
-#         requests:
-#           cpu: '1'
-#           memory: 4Gi
-#       runtime: {{ .Values.name }}
-#       storage:
-#         key: {{ .Values.model_s3_secret }}
-#         path: {{ .Values.model_path }}/{{ .Values.model_version }}
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  annotations:
+    openshift.io/display-name: {{ .Values.name }}
+    serving.knative.openshift.io/enablePassthrough: 'true'
+    sidecar.istio.io/inject: 'true'
+    sidecar.istio.io/rewriteAppHTTPProbers: 'true'
+  name: {{ .Values.name }}
+  finalizers:
+    - inferenceservice.finalizers
+  labels:
+    networking.knative.dev/visibility: cluster-local
+    opendatahub.io/dashboard: 'true'
+spec:
+  predictor:
+    containers:
+      - args:
+          - '--model_name={{ .Values.name }}'
+          - '--port=8001'
+          - '--rest_port=8085'
+          - '--model_path=/mnt/models'
+          - '--file_system_poll_wait_seconds=0'
+          - '--grpc_bind_address=0.0.0.0'
+          - '--rest_bind_address=0.0.0.0'
+          - '--target_device=AUTO'
+          - '--metrics_enable'
+        env:
+          - name: TS_SERVICE_ENVELOPE
+            value: kserve
+          - name: STORAGE_URI
+            value: oci://{{ .Values.image_registry | default "image-registry.openshift-image-registry.svc:5000" }}/{{ .Release.Namespace }}/{{ .Values.name }}:{{ .Values.version }}
+        image: 'quay.io/modh/openvino_model_server@sha256:6c7795279f9075bebfcd9aecbb4a4ce4177eec41fb3f3e1f1079ce6309b7ae45'
+        name: kserve-container
+        resources:
+          limits:
+            cpu: '3'
+            memory: 8Gi
+          requests:
+            cpu: '1'
+            memory: 4Gi
+      - args:
+          - '--model_name={{ .Values.name }}'
+          - '--predictor_protocol=v2'
+          - '--http_port=8080'
+          - '--grpc_port=8081'
+          - '--predictor_host=localhost:8085'
+          - '--predictor_use_ssl=False'
+          - '--scaler_file_path=models/{{ .Values.name }}/1/artifacts/scaler.pkl'
+          - '--encoder_file_path=models/{{ .Values.name }}/1/artifacts/label_encoder.pkl'
+        command:
+          - python
+          - '-m'
+          - music_transformer
+        image: 'quay.io/rlundber/music_transformer:0.20'
+        name: transformer-container
+        ports:
+          - containerPort: 8080
+            protocol: TCP
+        resources:
+          limits:
+            cpu: '1'
+            memory: 2Gi
+          requests:
+            cpu: '1'
+            memory: 2Gi

@@ -8,12 +8,12 @@ parser = argparse.ArgumentParser(parents=[kserve.model_server.parser])
 
 parser.add_argument(
     "--scaler_file_path", 
-    help="The path in the bucket to the scaler", 
+    help="The file path to the scaler in the sidecar", 
     required=True
 )
 parser.add_argument(
     "--encoder_file_path", 
-    help="The path in the bucket to the encoder", 
+    help="The firl path to the encoder in the sidecar", 
     required=True
 )
 
