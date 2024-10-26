@@ -1,0 +1,54 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: update-model-metadata
+spec:
+  params:
+    - name: APPLICATION_NAME
+      description: Name of the application
+      type: string
+    - name: PROJECT_NAME
+      description: MLOps environment name :)
+      type: string
+    - name: VERSION
+      description: Version of the application
+      type: string
+    - name: KFP_RUN_ID
+      description: Run ID of the Data Science Pipeline
+      type: string
+    - name: DEPLOY_ENVIRONMENT
+      description: Environment to deploy the app
+      type: string
+  steps:
+    - name: update-model-metadata
+      image: quay.io/rlundber/mlops-ct-cicd:0.4
+      command: ["/bin/sh", "-c"]
+      args:
+      - |
+        python3 -m pip install kfp.kubernetes
+        cat << 'EOF' | python3
+
+        namespace_file_path =\
+          '/var/run/secrets/kubernetes.io/serviceaccount/namespace'
+        with open(namespace_file_path, 'r') as namespace_file:
+          namespace = namespace_file.read()
+  
+        registry = ModelRegistry(server_address="http://model-registry-service.{namespace}.svc.cluster.local", port=8080, author="Cansu", is_secure=False)
+
+        # print the version info of registered model
+        version = registry.get_model_version("$(params.APPLICATION_NAME)", "$(params.VERSION)")
+        print("Model Version:", version, "with ID", version.id)
+
+        # Add metadata
+
+        version.custom_properties["pipeline_run_id"] = "$(params.KFP_RUN_ID)"
+        version.custom_properties["stage"] = "$(params.DEPLOY_ENVIRONMENT)"
+        registry.update(version)
+
+        # print all metadata
+
+        version = registry.get_model_version("$(params.APPLICATION_NAME)", "$(params.VERSION)")
+        print("Metadata:", version.custom_properties)
+
+        EOF

@@ -16,6 +16,9 @@ spec:
     - name: GIT_SHORT_REVISION
       description: Short Git commit hast
       type: string
+  results:
+    - name: KFP_RUN_ID
+      description: Run ID of the Data Science Pipeline
   steps:
   - name: execute-ds-pipeline
     workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
@@ -76,6 +79,13 @@ spec:
           sleep_duration=5,
       )
       
+      # save run id to store it in model metadata for tracing
+      KFP_RUN_ID = run_id.run_id
+      path = $(results.KFP_RUN_ID.path)
+
+      with open(path, "w") as file:
+          file.write(KFP_RUN_ID)
+
       print("🎉 job finished 🙌")
       EOF
 
