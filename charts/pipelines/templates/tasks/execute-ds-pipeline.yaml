@@ -67,7 +67,7 @@ spec:
           training_pipeline,
           arguments=default_parameters,
           experiment_name="jukebox-model-training",
-          namespace="mlops-prod",
+          namespace=namespace,
           enable_caching=True
       )
 
@@ -81,7 +81,7 @@ spec:
       
       # save run id to store it in model metadata for tracing
       KFP_RUN_ID = run_id.run_id
-      path = $(results.KFP_RUN_ID.path)
+      path = "$(results.KFP_RUN_ID.path)"
 
       with open(path, "w") as file:
           file.write(KFP_RUN_ID)

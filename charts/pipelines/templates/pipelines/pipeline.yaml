@@ -29,6 +29,9 @@ spec:
     - name: GIT_BRANCH
       type: string
       default: ""
+    - name: GIT_COMMIT_AUTHOR
+      type: string
+      default: ""
   tasks:
     # Clone jukebox repository
     - name: fetch-ds-pipeline-repository
@@ -83,6 +86,8 @@ spec:
           value: "$(params.APPLICATION_NAME)"
         - name: VERSION
           value: "$(params.GIT_SHORT_REVISION)"
+        - name: PROJECT_NAME
+          value: {{ .Values.USER_NAME }}
 
     # Fetch GitOps repository
     - name: fetch-gitops-repository
@@ -146,6 +151,8 @@ spec:
           value: {{ .Values.USER_NAME }}
         - name: KFP_RUN_ID
           value: "$(tasks.execute-ds-pipeline.results.KFP_RUN_ID)"
+        - name: GIT_COMMIT_AUTHOR
+          value: "$(params.GIT_COMMIT_AUTHOR)"
 
   results:
     - name: KFP_RUN_ID
