@@ -48,6 +48,7 @@ spec:
 
         version.custom_properties["pipeline_run_id"] = "$(params.KFP_RUN_ID)"
         version.custom_properties["stage"] = "$(params.DEPLOY_ENVIRONMENT)"
+        version.custom_properties["modelcar"] = "oci://image-registry.openshift-image-registry.svc:5000/$(params.PROJECT_NAME)-$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME):$(params.VERSION)"
     
         # Update author with the git author
 
