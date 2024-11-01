@@ -16,6 +16,9 @@ spec:
     - name: GIT_SHORT_REVISION
       description: Short Git commit hast
       type: string
+  results:
+    - name: KFP_RUN_ID
+      description: Run ID of the Data Science Pipeline
   steps:
   - name: execute-ds-pipeline
     workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
@@ -56,15 +59,15 @@ spec:
       
       default_parameters['version'] = "$(params.GIT_SHORT_REVISION)"
       default_parameters['model_name'] = "$(params.APPLICATION_NAME)"
-      default_parameters['model_storage_pvc'] = "jukebox-model-pvc"
+      default_parameters['model_storage_pvc'] = "$(params.APPLICATION_NAME)-model-pvc"
 
       # start a run
       print("🏃‍♂️ start a run")
       run_id = client.create_run_from_pipeline_func(
           training_pipeline,
           arguments=default_parameters,
-          experiment_name="jukebox-model-training",
-          namespace="mlops-prod",
+          experiment_name="$(params.APPLICATION_NAME)-model-training",
+          namespace=namespace,
           enable_caching=True
       )
 
@@ -76,6 +79,13 @@ spec:
           sleep_duration=5,
       )
       
+      # save run id to store it in model metadata for tracing
+      KFP_RUN_ID = run_id.run_id
+      path = "$(results.KFP_RUN_ID.path)"
+
+      with open(path, "w") as file:
+          file.write(KFP_RUN_ID)
+
       print("🎉 job finished 🙌")
       EOF
 

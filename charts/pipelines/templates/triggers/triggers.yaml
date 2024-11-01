@@ -24,10 +24,12 @@ spec:
     - name: git-revision
       value: $(body.head_commit.id)
     - name: gitrepositoryurl
-      value: $(body.repository.original_url)
+      value: $(body.repository.clone_url)
     - name: git-repo-name
       value: $(body.repository.name)
     - name: git-ref
       value: $(body.ref)
+    - name: git-commit-author
+      value: $(body.pusher.username)
   template: 
      ref: ct-trigger-template

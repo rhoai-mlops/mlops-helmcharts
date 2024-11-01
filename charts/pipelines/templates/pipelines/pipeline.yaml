@@ -29,7 +29,11 @@ spec:
     - name: GIT_BRANCH
       type: string
       default: ""
+    - name: GIT_COMMIT_AUTHOR
+      type: string
+      default: ""
   tasks:
+    # Clone jukebox repository
     - name: fetch-ds-pipeline-repository
       taskRef:
         name: git-clone
@@ -48,6 +52,8 @@ spec:
           value: "true"
         - name: sslVerify
           value: "false"
+
+    # Execute Data Science Pipeline
     - name: execute-ds-pipeline
       taskRef:
         name: execute-ds-pipeline
@@ -65,7 +71,7 @@ spec:
       runAfter:
         - fetch-ds-pipeline-repository
 
-# ModelCar step
+    # Containerize the model (modelcar)
     - name: build-modelcar
       taskRef:
         name: build-modelcar
@@ -83,7 +89,7 @@ spec:
         - name: PROJECT_NAME
           value: {{ .Values.USER_NAME }}
 
-# Fetch GitOps repository
+    # Fetch GitOps repository
     - name: fetch-gitops-repository
       taskRef:
         name: git-clone
@@ -105,7 +111,7 @@ spec:
       runAfter:
         - build-modelcar
 
-# Raise PR for deployment 
+    # Update model version in Git
     - name: deploy-test
       taskRef:
         name: deploy-or-raise-pr
@@ -126,3 +132,29 @@ spec:
           value: "test"
         - name: PROJECT_NAME
           value: {{ .Values.USER_NAME }}
+          
+    # update model metadata
+    - name: update-model-metadata
+      taskRef:
+        name: update-model-metadata
+        kind: Task
+      runAfter:
+        - deploy-test
+      params:
+        - name: APPLICATION_NAME
+          value: "$(params.APPLICATION_NAME)"
+        - name: VERSION
+          value: "$(params.GIT_SHORT_REVISION)"
+        - name: DEPLOY_ENVIRONMENT
+          value: "test"
+        - name: PROJECT_NAME
+          value: {{ .Values.USER_NAME }}
+        - name: KFP_RUN_ID
+          value: "$(tasks.execute-ds-pipeline.results.KFP_RUN_ID)"
+        - name: GIT_COMMIT_AUTHOR
+          value: "$(params.GIT_COMMIT_AUTHOR)"
+
+  results:
+    - name: KFP_RUN_ID
+      description: Run ID of the Data Science Pipeline
+      value: "$(tasks.execute-ds-pipeline.results.KFP_RUN_ID)"
