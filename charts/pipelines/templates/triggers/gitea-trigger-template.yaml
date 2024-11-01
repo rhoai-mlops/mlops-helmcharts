@@ -2,7 +2,7 @@
 apiVersion: triggers.tekton.dev/v1beta1	
 kind: TriggerTemplate
 metadata:
-  name: ct-trigger-template
+  name: ct-gitea-trigger-template
 spec:
   params:
     - name: gitrepositoryurl

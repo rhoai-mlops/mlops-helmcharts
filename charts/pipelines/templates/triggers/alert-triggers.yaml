@@ -1,0 +1,25 @@
+---
+apiVersion: triggers.tekton.dev/v1beta1 
+kind: Trigger 
+metadata:
+  name: ct-alert-trigger 
+spec:
+  interceptors:
+     - ref:
+         name: "cel" 
+       params:
+        - name: filter
+          value: (body.receiver == 'webhook')
+        - name: overlays
+          value:
+          - expression: body.commonLabels.alertname.split('-')[0]
+            key: application_name
+          - expression: body.commonLabels.alertname.split('-')[1]
+            key: version
+  bindings:
+    - name: application_name
+      value: $(extensions.application_name)
+    - name: version
+      value: $(extensions.version)
+  template: 
+     ref: ct-alert-trigger-template

@@ -2,14 +2,14 @@
 apiVersion: triggers.tekton.dev/v1beta1 
 kind: Trigger 
 metadata:
-  name: ct-trigger 
+  name: ct-gitea-trigger 
 spec:
   interceptors:
      - ref:
          name: "cel" 
        params:
-        # - name: filter
-        #   value: (body.ref.event == 'push' && body.ref.split('/')[2] == 'main')
+        - name: filter
+          value: (header.match('X-GitHub-Event', 'push') && body.ref.split('/')[2] == 'main')
         - name: overlays
           value:
           - expression: body.head_commit.id.truncate(7)
@@ -32,4 +32,4 @@ spec:
     - name: git-commit-author
       value: $(body.pusher.username)
   template: 
-     ref: ct-trigger-template
+     ref: ct-gitea-trigger-template
