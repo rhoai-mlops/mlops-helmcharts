@@ -44,17 +44,19 @@ spec:
         version = registry.get_model_version("$(params.APPLICATION_NAME)", "$(params.VERSION)")
         print("Model Version:", version, "with ID", version.id)
 
+        # Update URI
+        version.uri = "oci://image-registry.openshift-image-registry.svc:5000/$(params.PROJECT_NAME)-$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME):$(params.VERSION)"
+
         # Add metadata
 
         version.custom_properties["pipeline_run_id"] = "$(params.KFP_RUN_ID)"
         version.custom_properties["stage"] = "$(params.DEPLOY_ENVIRONMENT)"
-        version.custom_properties["modelcar"] = "oci://image-registry.openshift-image-registry.svc:5000/$(params.PROJECT_NAME)-$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME):$(params.VERSION)"
     
         # Update author with the git author
 
         version.author = "$(params.GIT_COMMIT_AUTHOR)"
 
-        # Update the model data
+        # Update the model metadata
 
         registry.update(version)
 

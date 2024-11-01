@@ -59,14 +59,14 @@ spec:
       
       default_parameters['version'] = "$(params.GIT_SHORT_REVISION)"
       default_parameters['model_name'] = "$(params.APPLICATION_NAME)"
-      default_parameters['model_storage_pvc'] = "jukebox-model-pvc"
+      default_parameters['model_storage_pvc'] = "$(params.APPLICATION_NAME)-model-pvc"
 
       # start a run
       print("🏃‍♂️ start a run")
       run_id = client.create_run_from_pipeline_func(
           training_pipeline,
           arguments=default_parameters,
-          experiment_name="jukebox-model-training",
+          experiment_name="$(params.APPLICATION_NAME)-model-training",
           namespace=namespace,
           enable_caching=True
       )
