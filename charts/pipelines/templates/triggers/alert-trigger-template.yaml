@@ -7,6 +7,8 @@ spec:
   params:
     - name: application_name
       description: The name of the application
+    - name: version
+      description: version of the application
   resourcetemplates:
     - apiVersion: tekton.dev/v1
       kind: PipelineRun
