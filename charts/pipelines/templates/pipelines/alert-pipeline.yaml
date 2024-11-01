@@ -17,6 +17,9 @@ spec:
     - name: VERSION
       type: string
       default: ""
+    - name: GIT_SHORT_REVISION
+      type: string
+      default: ""
     - name: GIT_REF
       type: string
       default: "refs/heads/main"
@@ -60,7 +63,7 @@ spec:
           value: "$(params.APPLICATION_NAME)/$(params.GIT_BRANCH)/3-prod_datascience"
         - name: APPLICATION_NAME
           value: "$(params.APPLICATION_NAME)"
-        - name: VERSION
+        - name: GIT_SHORT_REVISION
           value: "$(params.VERSION)"
       runAfter:
         - fetch-ds-pipeline-repository
