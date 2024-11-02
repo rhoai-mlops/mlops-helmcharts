@@ -56,7 +56,7 @@ spec:
           - python
           - '-m'
           - music_transformer
-        image: 'quay.io/rlundber/feast_music_transformer:0.5'
+        image: 'quay.io/rlundber/feast_music_transformer:0.6'
         name: transformer-container
         ports:
           - containerPort: 8080

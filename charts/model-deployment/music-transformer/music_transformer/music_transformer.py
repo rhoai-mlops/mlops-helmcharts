@@ -45,9 +45,6 @@ class MusicTransformer(kserve.Model):
         logger.info("Scaler file path = %s", scaler_file_path)
         logger.info("Encoder file path = %s", encoder_file_path)
 
-        self.scaler = self.load_scaler()
-        self.label_encoder = self.load_label_encoder()
-
         self.ready = True
 
     def load_scaler(self):
@@ -65,6 +62,8 @@ class MusicTransformer(kserve.Model):
     def preprocess(
         self, payload: Union[Dict, InferRequest], headers: Dict[str, str] = None
     ) -> Union[Dict, InferRequest]:
+
+        self.scaler = self.load_scaler()
 
         logger.info("Incoming payload: %s", payload)
 
@@ -100,6 +99,8 @@ class MusicTransformer(kserve.Model):
     def postprocess(
         self, infer_response: Union[Dict, InferResponse, ModelInferResponse], headers: Dict[str, str] = None,
     ) -> Union[Dict, InferResponse]:
+
+        self.label_encoder = self.load_label_encoder()
         
         prediction = infer_response.outputs[0].as_numpy()
         logger.info("The output from model predict is %s", prediction)
