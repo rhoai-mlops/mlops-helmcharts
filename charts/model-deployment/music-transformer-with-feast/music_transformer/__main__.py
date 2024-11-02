@@ -13,7 +13,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--encoder_file_path", 
-    help="The firl path to the encoder in the sidecar", 
+    help="The file path to the encoder in the sidecar", 
     required=True
 )
 parser.add_argument(
