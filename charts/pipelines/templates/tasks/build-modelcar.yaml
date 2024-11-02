@@ -24,8 +24,8 @@ spec:
         #!/bin/sh
         cat <<EOF > Dockerfile
         FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4
-        WORKDIR /models/1
-        RUN mkdir -p /models/1/artifacts
+        WORKDIR /models/$(params.APPLICATION_NAME)/1
+        RUN mkdir -p /models/$(params.APPLICATION_NAME)/1/artifacts
         COPY $(params.APPLICATION_NAME).onnx .
         COPY artifacts/ artifacts/
         USER 1001
