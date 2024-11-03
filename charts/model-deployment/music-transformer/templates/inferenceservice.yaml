@@ -1,13 +1,13 @@
+---
 apiVersion: serving.kserve.io/v1beta1
 kind: InferenceService
 metadata:
   annotations:
-    openshift.io/display-name: music
+    openshift.io/display-name: {{ .Values.name }}
     serving.knative.openshift.io/enablePassthrough: 'true'
     sidecar.istio.io/inject: 'true'
     sidecar.istio.io/rewriteAppHTTPProbers: 'true'
-  name: jukebox
-  namespace: test-mlops
+  name: {{ .Values.name }}
   finalizers:
     - inferenceservice.finalizers
   labels:
@@ -17,7 +17,7 @@ spec:
   predictor:
     containers:
       - args:
-          - '--model_name=jukebox'
+          - '--model_name={{ .Values.name }}'
           - '--port=8001'
           - '--rest_port=8085'
           - '--model_path=/mnt/models'
@@ -30,7 +30,7 @@ spec:
           - name: TS_SERVICE_ENVELOPE
             value: kserve
           - name: STORAGE_URI
-            value: 'oci://image-registry.openshift-image-registry.svc:5000/test-mlops/jukebox:latest'
+            value: oci://{{ .Values.image_registry | default "image-registry.openshift-image-registry.svc:5000" }}/{{ .Release.Namespace }}/{{ .Values.name }}:{{ .Values.version }}
         image: 'quay.io/modh/openvino_model_server@sha256:6c7795279f9075bebfcd9aecbb4a4ce4177eec41fb3f3e1f1079ce6309b7ae45'
         name: kserve-container
         resources:
@@ -41,22 +41,19 @@ spec:
             cpu: '1'
             memory: 4Gi
       - args:
-          - '--model_name=jukebox'
+          - '--model_name={{ .Values.name }}'
           - '--predictor_protocol=v2'
           - '--http_port=8080'
           - '--grpc_port=8081'
           - '--predictor_host=localhost:8085'
           - '--predictor_use_ssl=False'
-          - '--scaler_file_path=models/jukebox/1/artifacts/scaler.pkl'
-          - '--encoder_file_path=models/jukebox/1/artifacts/label_encoder.pkl'
+          - '--scaler_file_path=models/{{ .Values.name }}/1/artifacts/scaler.pkl'
+          - '--encoder_file_path=models/{{ .Values.name }}/1/artifacts/label_encoder.pkl'
         command:
           - python
           - '-m'
           - music_transformer
-        envFrom:
-          - secretRef:
-              name: aws-connection-models
-        image: 'quay.io/rlundber/music_transformer:0.19'
+        image: 'quay.io/rhoai-mlops/music_transformer:0.1'
         name: transformer-container
         ports:
           - containerPort: 8080
