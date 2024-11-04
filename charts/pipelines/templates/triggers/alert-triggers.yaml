@@ -8,7 +8,6 @@ spec:
      - ref:
          name: "cel" 
        params:
-        somehow the filtering doesn't work as expected even though the 
         - name: filter
           value: has(body.receiver)
         - name: overlays
