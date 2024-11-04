@@ -10,4 +10,4 @@ spec:
   - name: default
     webhookConfigs:
       - url: >-
-          http://el-ct-listener-{{ .Release.Namespace }}-mlops.svc.cluster.local:8080
+          https://el-ct-listener-{{ .Release.Namespace }}-mlops.{{ .Values.cluster_domain }}/
