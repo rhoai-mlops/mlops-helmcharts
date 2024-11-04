@@ -8,8 +8,9 @@ spec:
      - ref:
          name: "cel" 
        params:
+        somehow the filtering doesn't work as expected even though the 
         - name: filter
-          value: (body.receiver == 'webhook')
+          value: has(body.receiver)
         - name: overlays
           value:
           - expression: body.commonLabels.alertname.split('-')[0]
