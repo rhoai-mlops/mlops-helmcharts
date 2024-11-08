@@ -58,9 +58,10 @@ spec:
         registry.update(version)
 
         # Update Model URI
-        model = registry.get_model_artifact("$(params.APPLICATION_NAME)","$(params.VERSION)")
-        model.uri = "oci://image-registry.openshift-image-registry.svc:5000/$(params.PROJECT_NAME)-$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME):$(params.VERSION)"
-        registry.update(model)
+        # commenting out due to the bug https://issues.redhat.com/browse/RHOAIENG-15326 
+        # model = registry.get_model_artifact("$(params.APPLICATION_NAME)","$(params.VERSION)")
+        # model.uri = "oci://image-registry.openshift-image-registry.svc:5000/$(params.PROJECT_NAME)-$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME):$(params.VERSION)"
+        # registry.update(model)
 
         # print all metadata
 
