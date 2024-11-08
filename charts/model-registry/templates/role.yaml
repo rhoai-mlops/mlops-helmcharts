@@ -1,0 +1,27 @@
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  annotations:
+    openshift.io/description: Can access Model Registry {{ .Values.name }}-mlops-registry
+    openshift.io/display-name: Registry User {{ .Values.name }}-mlops-registry
+  name: registry-user-{{ .Values.name }}-mlops-registry
+  namespace: rhoai-model-registries
+  labels:
+    app: {{ .Values.name }}-mlops-registry
+    app.kubernetes.io/component: {{ .Values.name }}-mlops-registry
+    app.kubernetes.io/created-by: {{ .Values.name }}-mlops-registry-operator
+    app.kubernetes.io/instance: registry-user-{{ .Values.name }}-mlops-registry
+    app.kubernetes.io/managed-by: {{ .Values.name }}-mlops-registry-operator
+    app.kubernetes.io/name: {{ .Values.name }}-mlops-registry
+    app.kubernetes.io/part-of: {{ .Values.name }}-mlops-registry
+    component: {{ .Values.name }}-mlops-registry
+rules:
+  - verbs:
+      - get
+    apiGroups:
+      - ''
+    resources:
+      - services
+    resourceNames:
+      - {{ .Values.name }}-mlops-registry

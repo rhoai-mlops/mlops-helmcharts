@@ -1,0 +1,21 @@
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: dashboard-permissions-{{ .Values.name }}-mlops
+  namespace: rhoai-model-registries
+  labels:
+    app: {{ .Values.name }}-mlops-registry
+    app.kubernetes.io/component: {{ .Values.name }}-mlops-registry
+    app.kubernetes.io/name: {{ .Values.name }}-mlops-registry
+    app.kubernetes.io/part-of: {{ .Values.name }}-mlops-registry
+    component: {{ .Values.name }}-mlops-registry
+    opendatahub.io/dashboard: 'true'
+subjects:
+  - kind: User
+    apiGroup: rbac.authorization.k8s.io
+    name: {{ .Values.name }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: registry-user-{{ .Values.name }}-mlops-registry
