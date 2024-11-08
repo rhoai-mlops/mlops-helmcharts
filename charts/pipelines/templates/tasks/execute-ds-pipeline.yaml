@@ -60,6 +60,7 @@ spec:
       default_parameters['version'] = "$(params.GIT_SHORT_REVISION)"
       default_parameters['model_name'] = "$(params.APPLICATION_NAME)"
       default_parameters['model_storage_pvc'] = "$(params.APPLICATION_NAME)-model-pvc"
+      default_parameters['cluster_domain'] = "{{ .Values.cluster_domain }}"
       default_parameters['prod_flag'] = True
 
       # start a run
