@@ -31,6 +31,7 @@ spec:
         python3 -m pip install model-registry=="0.2.9"
         cat << 'EOF' | python3
 
+        from os import environ
         from model_registry import ModelRegistry 
 
         namespace_file_path =\
