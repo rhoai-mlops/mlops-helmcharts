@@ -1,4 +1,4 @@
 # override in argo
-operator: true
+operator: false
 # override in argo
 ignoreHelmHooks: true

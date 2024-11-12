@@ -1,8 +1,8 @@
 ---
 apiVersion: v2
-description: A Helm chart for model deployments🌙
-name: model-deployment
-version: 0.0.5
+description: A Helm chart to create TrustyAI service ⛵️
+name: trustyai
+version: 0.0.1
 home: https://rhoai-mlops.github.io/mlops/
 maintainers:
   - name: RHRolun

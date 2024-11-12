@@ -1,0 +1,13 @@
+---
+apiVersion: monitoring.coreos.com/v1beta1
+kind: AlertmanagerConfig
+metadata:
+  name: {{ .Values.name }}-alerting
+spec:
+  route:
+    receiver: default
+  receivers:
+  - name: default
+    webhookConfigs:
+      - url: >-
+          https://el-ct-listener-{{ .Release.Namespace }}-mlops.{{ .Values.cluster_domain }}/

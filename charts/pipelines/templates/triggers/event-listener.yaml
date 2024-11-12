@@ -6,7 +6,8 @@ metadata:
   name: ct-listener
 spec:
   triggers:
-    - triggerRef: ct-trigger 
+    - triggerRef: ct-gitea-trigger
+    - triggerRef: ct-alert-trigger
 ---
 kind: Route
 apiVersion: route.openshift.io/v1
