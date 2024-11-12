@@ -16,7 +16,7 @@ spec:
     model:
       modelFormat:
         name: onnx
-      storageUri: oci://{{ .Values.image_registry | default "image-registry.openshift-image-registry.svc:5000" }}/{{ .Release.Namespace }}/{{ .Values.name }}:{{ .Values.version }}
+      storageUri: oci://{{ .Values.image_repository | default "quay.io" }}/{{ .Values.image_namespace | default .Release.Namespace }}/{{ .Values.name }}:{{ .Values.version }}
       name: ''
       resources:
         limits:

@@ -1,3 +1,4 @@
 ---
 USER_NAME:  user1
 git_server: gitea.com
+alert_trigger: false

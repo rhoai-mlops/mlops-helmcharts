@@ -1,3 +1,4 @@
+{{ if .Values.alert_trigger }}
 ---
 apiVersion: triggers.tekton.dev/v1beta1	
 kind: TriggerTemplate
@@ -29,3 +30,4 @@ spec:
         - name: model-workspace
           persistentVolumeClaim:
             claimName: jukebox-model-pvc
+{{- end }}

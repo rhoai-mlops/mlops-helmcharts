@@ -1,3 +1,4 @@
+{{ if .Values.alert_trigger }}
 ---
 apiVersion: triggers.tekton.dev/v1beta1 
 kind: Trigger 
@@ -23,3 +24,4 @@ spec:
       value: $(extensions.version)
   template: 
      ref: ct-alert-trigger-template
+{{- end }}

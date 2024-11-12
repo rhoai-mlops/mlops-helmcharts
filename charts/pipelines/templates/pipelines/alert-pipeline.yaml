@@ -1,3 +1,4 @@
+{{ if .Values.alert_trigger }}
 ---
 apiVersion: tekton.dev/v1
 kind: Pipeline
@@ -155,3 +156,4 @@ spec:
     - name: KFP_RUN_ID
       description: Run ID of the Data Science Pipeline
       value: "$(tasks.execute-ds-pipeline.results.KFP_RUN_ID)"
+{{- end }}
