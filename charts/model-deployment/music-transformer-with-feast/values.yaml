@@ -1,0 +1,6 @@
+---
+name: jukebox
+version: latest
+feast_server_url:
+feature_service:
+entity_id_name:

@@ -3,11 +3,15 @@ apiVersion: serving.kserve.io/v1beta1
 kind: InferenceService
 metadata:
   annotations:
-    serving.kserve.io/deploymentMode: RawDeployment
+    openshift.io/display-name: {{ .Values.name }}
+    serving.knative.openshift.io/enablePassthrough: 'true'
+    sidecar.istio.io/inject: 'true'
+    sidecar.istio.io/rewriteAppHTTPProbers: 'true'
   name: {{ .Values.name }}
   finalizers:
     - inferenceservice.finalizers
   labels:
+    networking.knative.dev/visibility: cluster-local
     opendatahub.io/dashboard: 'true'
 spec:
   predictor:

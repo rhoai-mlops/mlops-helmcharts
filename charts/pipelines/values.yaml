@@ -1,4 +1,4 @@
 ---
 USER_NAME:  user1
-git_server: gitea.com
+cluster_domain: app.cluster.xyz
 alert_trigger: false
