@@ -99,7 +99,7 @@ spec:
           workspace: shared-workspace
       params:
         - name: url
-          value: "https://{{ .Values.git_server }}/{{ .Values.USER_NAME }}/mlops-gitops.git"
+          value: "https://gitea-gitea.{{ .Values.cluster_domain }}/{{ .Values.USER_NAME }}/mlops-gitops.git"
         - name: revision
           value: "main"
         - name: subdirectory

@@ -1,0 +1,10 @@
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Values.name }}-mlops-registry-db-parameters
+  namespace: {{ .Values.name }}-mlops
+data:
+  MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+  MYSQL_DATABASE: metadb
+  MYSQL_PORT: '3306'
