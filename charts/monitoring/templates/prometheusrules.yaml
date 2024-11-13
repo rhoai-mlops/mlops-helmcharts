@@ -10,8 +10,8 @@ spec:
     # example alert - more to add
     - alert: {{ .Values.name }}-datadrift-alert
       annotations:
-        message: '{{ .Values.name }} has data drift...'
-      expr: trustyai_meanshift{namespace="{{ .Release.Namespace }}", subcategory="dense_4-8"}<0.05
+        message: '{{ .Values.name }} meanshift p-value has dropped below 0.05 for dense_input-8, indicating a drift in data over the last 5000 samples compared to the training data.'
+      expr: trustyai_meanshift{namespace="{{ .Release.Namespace }}", subcategory="dense_input-8"}<0.05
       for: 10m
       labels:
         severity: "critical"
