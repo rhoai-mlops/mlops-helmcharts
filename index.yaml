@@ -1,0 +1,128 @@
+apiVersion: v1
+entries:
+  database:
+  - apiVersion: v2
+    created: "2024-11-15T21:01:12.965406105Z"
+    description: "A Helm chart for transactional database \U0001F3B8"
+    digest: db35015c1f075e2de15ec4bf6c7534edd53999c029ac425b30de488e29d7ae3d
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: database
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/database-0.0.2/database-0.0.2.tgz
+    version: 0.0.2
+  dspa:
+  - apiVersion: v2
+    created: "2024-11-15T21:01:13.178936063Z"
+    description: "A little Helm chart for Data Science Pipeline Application \U0001F408"
+    digest: 2dc1d94084c223913d36371704eaddf4afe1c5323a42ba91e469de7a8c5ce65d
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: dspa
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/dspa-0.0.4/dspa-0.0.4.tgz
+    version: 0.0.4
+  feast:
+  - apiVersion: v2
+    created: "2024-11-15T21:01:13.359167301Z"
+    description: "A Helm chart for deploying Feast \U0001F60B"
+    digest: e761f57fbcdf805ef7b025710b974cc0027082d49f680891992b476ac063942b
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: feast
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/feast-0.0.2/feast-0.0.2.tgz
+    version: 0.0.2
+  jukebox-grafana:
+  - apiVersion: v2
+    created: "2024-11-15T21:01:13.482421834Z"
+    description: "A Helm chart for enable and deploy Jukebox Grafana Dashboard \U0001F4CA"
+    digest: 93e444ea8757516b6eb37ad7637b47a57f74d487556819eeba00c6dcc8e606ed
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: jukebox-grafana
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/jukebox-grafana-0.0.1/jukebox-grafana-0.0.1.tgz
+    version: 0.0.1
+  minio:
+  - apiVersion: v2
+    created: "2024-11-15T21:01:13.73765265Z"
+    description: "A Helm chart for minio \U0001F408"
+    digest: 0e83d908278e942df31360b9e58e6622118a9f76056cbd6a62e605d682c5b278
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: minio
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/minio-0.0.7/minio-0.0.7.tgz
+    version: 0.0.7
+  - apiVersion: v2
+    created: "2024-11-15T21:01:13.593207983Z"
+    description: "A Helm chart for model registry and its db \U0001F92D"
+    digest: 510b2311d49c71097d611bae0fa251adc026f456474d60c77e539092a53bf148
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: minio
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/minio-0.0.1/minio-0.0.1.tgz
+    version: 0.0.1
+  monitoring:
+  - apiVersion: v2
+    created: "2024-11-15T21:01:13.871364714Z"
+    description: "A Helm chart for alerts and notification config \U0001F6A8"
+    digest: dbb43f9f8a3303ff266ab90c9208131d94c1c6af18697b0bdddfa913a5ff9d75
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: monitoring
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/monitoring-0.0.1/monitoring-0.0.1.tgz
+    version: 0.0.1
+  tekton:
+  - apiVersion: v2
+    created: "2024-11-15T21:01:13.992401363Z"
+    description: "A Helm chart for deploying Tekton Pipeline \U0001F408"
+    digest: 9ef1d05afd79800209870c9c838d6abd49d008344f3ecf81bb8932a05db392b3
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: tekton
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/tekton-0.0.5/tekton-0.0.5.tgz
+    version: 0.0.5
+  trustyai:
+  - apiVersion: v2
+    created: "2024-11-15T21:01:14.123293949Z"
+    description: A Helm chart to create TrustyAI service ⛵️
+    digest: ff834300d16bcaeaf2ce411a8af954606cd021d73a78c71611d85047a0d85233
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: trustyai
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/trustyai-0.0.1/trustyai-0.0.1.tgz
+    version: 0.0.1
+generated: "2024-11-15T21:01:14.12331052Z"
