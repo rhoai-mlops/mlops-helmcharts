@@ -5,7 +5,6 @@ metadata:
   annotations:
     openshift.io/description: ''
     openshift.io/display-name: {{ .Values.name }}-mlops-
-    argocd.argoproj.io/compare-options: IgnoreExtraneous
   name: {{ .Values.name }}-mlops-registry
   namespace: rhoai-model-registries
   finalizers:
