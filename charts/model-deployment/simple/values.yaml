@@ -2,4 +2,4 @@
 name: jukebox
 version: latest
 image_repository: quay.io
-image_namespace: rhoai
+image_namespace: rhoai-mlops

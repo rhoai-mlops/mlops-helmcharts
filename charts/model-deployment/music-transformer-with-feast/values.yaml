@@ -1,6 +1,8 @@
 ---
 name: jukebox
 version: latest
+image_repository: quay.io
+image_namespace: rhoai-mlops
 feast_server_url:
 feature_service:
 entity_id_name:

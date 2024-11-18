@@ -32,9 +32,9 @@ spec:
       image: quay.io/redhat-cop/tekton-task-helm:3.6.3
       script: |
         #!/bin/sh
-        yq eval -i .applications."$(params.APPLICATION_NAME)".values.version=\"$(params.VERSION)\" "$(params.DEPLOY_ENVIRONMENT)/values.yaml"
-        yq eval -i .applications."$(params.APPLICATION_NAME)".values.image_repository=\"image-registry.openshift-image-registry.svc:5000\" "$(params.DEPLOY_ENVIRONMENT)/values.yaml"
-        yq eval -i .applications."$(params.APPLICATION_NAME)".values.image_namespace=\"$(params.PROJECT_NAME)-$(params.DEPLOY_ENVIRONMENT)\" "$(params.DEPLOY_ENVIRONMENT)/values.yaml"
+        yq eval -i .version=\"$(params.VERSION)\" "$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml"
+        yq eval -i .image_repository=\"image-registry.openshift-image-registry.svc:5000\" "$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml"
+        yq eval -i .image_namespace=\"$(params.PROJECT_NAME)-$(params.DEPLOY_ENVIRONMENT)\" "$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml"
     - name: commit-changes
       workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
       image: quay.io/redhat-cop/ubi8-git:latest
@@ -45,7 +45,7 @@ spec:
         git config --global user.name "🐈 Tekton 🐈"
         git config --global push.default simple
         git config --global --add safe.directory '*'
-        git add $(params.DEPLOY_ENVIRONMENT)/values.yaml
+        git add $(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml
         git commit -m "🚀 AUTOMATED COMMIT - Deployment of $(params.APPLICATION_NAME) for version $(params.VERSION) 🚀" || rc=$?
         git remote set-url origin $(cat $HOME/.git-credentials)/$(params.PROJECT_NAME)/mlops-gitops.git
         git push origin HEAD:main
