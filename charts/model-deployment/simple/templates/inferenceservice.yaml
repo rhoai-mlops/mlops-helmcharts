@@ -15,8 +15,6 @@ metadata:
     opendatahub.io/dashboard: 'true'
 spec:
   predictor:
-    maxReplicas: 0
-    minReplicas: 1
     model:
       modelFormat:
         name: onnx
