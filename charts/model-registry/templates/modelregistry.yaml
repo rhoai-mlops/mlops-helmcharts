@@ -4,7 +4,8 @@ kind: ModelRegistry
 metadata:
   annotations:
     openshift.io/description: ''
-    openshift.io/display-name: {{ .Values.name }}-mlops-registry
+    openshift.io/display-name: {{ .Values.name }}-mlops-
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
   name: {{ .Values.name }}-mlops-registry
   namespace: rhoai-model-registries
   finalizers:
@@ -21,13 +22,7 @@ spec:
         cpu: 100m
         memory: 256Mi
   istio:
-    audiences:
-      - 'https://kubernetes.default.svc'
-    authConfigLabels:
-      security.opendatahub.io/authorization-group: default
-    authProvider: redhat-ods-applications-auth-provider
     gateway:
-      domain: {{ .Values.cluster_domain }}
       grpc:
         gatewayRoute: enabled
         port: 443
