@@ -4,7 +4,7 @@ kind: ModelRegistry
 metadata:
   annotations:
     openshift.io/description: ''
-    openshift.io/display-name: {{ .Values.name }}-mlops-
+    openshift.io/display-name: {{ .Values.name }}-mlops-registry
   name: {{ .Values.name }}-mlops-registry
   namespace: rhoai-model-registries
   finalizers:
