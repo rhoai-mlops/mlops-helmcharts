@@ -44,7 +44,7 @@ spec:
             failureThreshold: 3
           env:
             - name: API_URL
-              value: 'https://{{ .Values.model_name }}-{{ .Values.name }}-{{ .Values.environment }}.{{ .Values.cluster_domain }}
+              value: 'https://{{ .Values.model_name }}-{{ .Values.name }}-{{ .Values.environment }}.{{ .Values.cluster_domain }}'
             - name: PORT
               value: '3000'
           securityContext:
