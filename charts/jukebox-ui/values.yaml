@@ -1,4 +1,4 @@
 environment: test
-name: <USER_NAME>
-cluster_domain: <CLUSTER_DOMAIN>
+model_endpoint: <MODEL_ENDPOINT>
+input_node: input
 model_name: jukebox
