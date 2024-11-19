@@ -1,0 +1,13 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: jukebox-ui
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3000
+      targetPort: http
+  selector:
+    app.kubernetes.io/name: jukebox-ui

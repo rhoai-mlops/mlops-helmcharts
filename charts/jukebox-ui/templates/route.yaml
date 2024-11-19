@@ -1,0 +1,16 @@
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: jukebox-ui
+spec:
+  to:
+    kind: Service
+    name: jukebox-ui
+    weight: 100
+  port:
+    targetPort: http
+  wildcardPolicy: None
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
