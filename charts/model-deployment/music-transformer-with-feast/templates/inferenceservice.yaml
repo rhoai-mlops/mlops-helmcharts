@@ -11,7 +11,7 @@ metadata:
   finalizers:
     - inferenceservice.finalizers
   labels:
-    networking.knative.dev/visibility: cluster-local
+    # networking.knative.dev/visibility: cluster-local
     opendatahub.io/dashboard: 'true'
 spec:
   predictor:
