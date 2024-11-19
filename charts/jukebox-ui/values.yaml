@@ -1,3 +1,4 @@
 environment: test
-name: username
-cluster_domain: apps.cluster.xyz
+name: <USER_NAME>
+cluster_domain: <CLUSTER_DOMAIN>
+model_name: jukebox
