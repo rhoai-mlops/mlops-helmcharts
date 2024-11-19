@@ -87,6 +87,19 @@ entries:
     - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/minio-0.0.7/minio-0.0.7.tgz
     version: 0.0.7
   - apiVersion: v2
+    created: "2024-11-19T00:30:21.245344947Z"
+    description: "A Helm chart for model registry and its db \U0001F92D"
+    digest: 1762e3e60720350502103bf824dad4c09410b95db19e73ce495d3b8ca7dbc4a9
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: minio
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/minio-0.0.2/minio-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
     created: "2024-11-15T21:01:13.593207983Z"
     description: "A Helm chart for model registry and its db \U0001F92D"
     digest: 510b2311d49c71097d611bae0fa251adc026f456474d60c77e539092a53bf148
@@ -115,6 +128,19 @@ entries:
     version: 0.0.1
   tekton:
   - apiVersion: v2
+    created: "2024-11-19T00:30:21.340848097Z"
+    description: "A Helm chart for deploying Tekton Pipeline \U0001F408"
+    digest: 47bab117e36e6ba2bc3613306eb9ab22a4e2e0114beeeaedffe15829f6c4fd55
+    home: https://rhoai-mlops.github.io/mlops/
+    maintainers:
+    - name: RHRolun
+    - name: rcarrata
+    - name: ckavili
+    name: tekton
+    urls:
+    - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/tekton-0.0.6/tekton-0.0.6.tgz
+    version: 0.0.6
+  - apiVersion: v2
     created: "2024-11-15T21:01:13.992401363Z"
     description: "A Helm chart for deploying Tekton Pipeline \U0001F408"
     digest: 9ef1d05afd79800209870c9c838d6abd49d008344f3ecf81bb8932a05db392b3
@@ -141,4 +167,4 @@ entries:
     urls:
     - https://github.com/rhoai-mlops/mlops-helmcharts/releases/download/trustyai-0.0.1/trustyai-0.0.1.tgz
     version: 0.0.1
-generated: "2024-11-18T06:34:13.373437621Z"
+generated: "2024-11-19T00:30:21.340867614Z"
