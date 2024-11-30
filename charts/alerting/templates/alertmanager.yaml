@@ -1,3 +1,4 @@
+{{ if .Values.alert_manager }}
 ---
 apiVersion: monitoring.coreos.com/v1beta1
 kind: AlertmanagerConfig
@@ -11,3 +12,5 @@ spec:
     webhookConfigs:
       - url: >-
           https://el-ct-listener-{{ .Release.Namespace }}-mlops.{{ .Values.cluster_domain }}/
+
+{{- end }}

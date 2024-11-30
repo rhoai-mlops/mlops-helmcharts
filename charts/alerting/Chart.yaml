@@ -1,7 +1,7 @@
 ---
 apiVersion: v2
 description: A Helm chart for alerts and notification config 🚨
-name: monitoring
+name: alerting
 version: 0.0.1
 home: https://rhoai-mlops.github.io/mlops/
 maintainers:
