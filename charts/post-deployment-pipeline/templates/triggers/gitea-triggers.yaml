@@ -2,7 +2,7 @@
 apiVersion: triggers.tekton.dev/v1beta1 
 kind: Trigger 
 metadata:
-  name: ct-gitea-trigger 
+  name: post-deployment-gitea-trigger 
 spec:
   interceptors:
      - ref:
@@ -32,4 +32,4 @@ spec:
     - name: git-commit-author
       value: $(body.pusher.username)
   template: 
-     ref: ct-gitea-trigger-template
+     ref: post-deployment-gitea-trigger-template
