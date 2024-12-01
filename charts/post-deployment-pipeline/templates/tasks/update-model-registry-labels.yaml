@@ -2,7 +2,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: update-model-metadata
+  name: update-model-registry-labels
 spec:
   params:
     - name: APPLICATION_NAME
@@ -20,7 +20,7 @@ spec:
     - name: GIT_COMMIT_AUTHOR
       description: Author of the git commit
   steps:
-    - name: update-model-metadata
+    - name: update-model-registry-labels
       image: quay.io/rlundber/mlops-ct-cicd:0.4
       command: ["/bin/sh", "-c"]
       args:
