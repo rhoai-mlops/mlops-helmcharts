@@ -2,7 +2,7 @@
 apiVersion: triggers.tekton.dev/v1beta1	
 kind: TriggerTemplate
 metadata:
-  name: ct-gitea-trigger-template
+  name: post-deployment-gitea-trigger-template
 spec:
   params:
     - name: gitrepositoryurl
@@ -25,10 +25,10 @@ spec:
     - apiVersion: tekton.dev/v1
       kind: PipelineRun
       metadata:
-        generateName: ct-pipeline-
+        generateName: post-deployment-pipeline-
       spec:
         pipelineRef:
-          name: ct-pipeline
+          name: post-deployment-pipeline
         params:
           - name: APPLICATION_NAME
             value: $(tt.params.git-repo-name)
