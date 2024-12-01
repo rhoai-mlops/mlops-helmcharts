@@ -1,0 +1,35 @@
+---
+apiVersion: triggers.tekton.dev/v1beta1 
+kind: Trigger 
+metadata:
+  name: ct-gitea-trigger 
+spec:
+  interceptors:
+     - ref:
+         name: "cel" 
+       params:
+        - name: filter
+          value: (header.match('X-GitHub-Event', 'push') && body.ref.split('/')[2] == 'main')
+        - name: overlays
+          value:
+          - expression: body.head_commit.id.truncate(7)
+            key: truncated_sha
+          - expression: body.ref.split('/')[2]
+            key: branch_name
+  bindings:
+    - name: git-branch
+      value: $(extensions.branch_name)
+    - name: git-short-revision
+      value: $(extensions.truncated_sha)
+    - name: git-revision
+      value: $(body.head_commit.id)
+    - name: gitrepositoryurl
+      value: $(body.repository.clone_url)
+    - name: git-repo-name
+      value: $(body.repository.name)
+    - name: git-ref
+      value: $(body.ref)
+    - name: git-commit-author
+      value: $(body.pusher.username)
+  template: 
+     ref: ct-gitea-trigger-template
