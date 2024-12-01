@@ -1,0 +1,130 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: update-model-metadata
+spec:
+  params:
+    - name: APPLICATION_NAME
+      description: Name of the application
+      type: string
+    - name: PROJECT_NAME
+      description: MLOps environment name :)
+      type: string
+    - name: VERSION
+      description: Version of the application
+      type: string
+    - name: KFP_RUN_ID
+      description: Run ID of the Data Science Pipeline
+      type: string
+    - name: DEPLOY_ENVIRONMENT
+      description: Environment to deploy the app
+      type: string
+    - name: GIT_COMMIT_AUTHOR
+      description: Author of the git commit
+  steps:
+    - name: update-model-metadata
+      image: quay.io/rlundber/mlops-ct-cicd:0.4
+      command: ["/bin/sh", "-c"]
+      args:
+      - |
+        python3 -m pip install model-registry=="0.2.10"
+        cat << 'EOF' | python3
+
+        import pandas as pd
+        import pickle
+        import json
+        import onnxruntime as rt
+        import numpy as np
+        import onnx
+
+        import requests
+        from urllib.parse import urljoin
+
+        import urllib.request
+        urllib.request.urlretrieve("https://github.com/rhoai-mlops/jukebox/raw/refs/heads/main/4-metrics/fetch_artifacts_from_registry.py", "fetch_artifacts_from_registry.py")
+        from fetch_artifacts_from_registry import fetch_artifacts_from_registry
+
+        namespace_file_path =\
+            '/var/run/secrets/kubernetes.io/serviceaccount/namespace'
+        with open(namespace_file_path, 'r') as namespace_file:
+            current_namespace = namespace_file.read()
+
+        artifacts = ["preprocess-data/train_data.pkl", "preprocess-data/scaler.pkl", "convert-keras-to-onnx/onnx_model.onnx"]
+        pipeline_namespace = f"{current_namespace}-mlops"
+        model_registry_url = f"https://{current_namespace}-mlops-registry-rest.{cluster_domain}"
+        author_name = current_namespace
+        data_tag = model_version
+
+        saved_files = fetch_artifacts_from_registry(
+            artifacts,
+            pipeline_namespace,
+            model_registry_url,
+            model_name,
+            model_version,
+            author_name,
+        )
+
+        X_train = pd.read_pickle(saved_files['preprocess-data/train_data.pkl'])[0][:5000]
+        with open(saved_files["preprocess-data/scaler.pkl"], 'rb') as handle:
+            scaler = pickle.load(handle)
+        data = scaler.transform(X_train)
+
+        sess = rt.InferenceSession(saved_files["convert-keras-to-onnx/onnx_model.onnx"], providers=rt.get_available_providers())
+        input_name = sess.get_inputs()[0].name
+        output_name = sess.get_outputs()[0].name
+        y_pred_temp = sess.run([output_name], {input_name: data.astype(np.float32).tolist()})
+
+        training_data = {
+            "model_name": model_name,
+            "data_tag": data_tag,
+            "request": {
+                "inputs": [
+                    {
+                        "name": input_name,
+                        "shape": np.shape(data),
+                        "datatype": "FP32",
+                        "data": data.tolist()
+                    }
+                ]    
+            },
+            "response": {
+                "model_name": model_name,
+                "model_version": "1",
+                "outputs": [
+                    {
+                        "name": output_name,
+                        "datatype": "FP32",
+                        "shape": np.shape(y_pred_temp[0]),
+                        "data": y_pred_temp[0].tolist()
+                    }
+                ]
+            }
+        }
+
+        base_url = f"http://trustyai-service.{current_namespace}-test.svc.cluster.local"
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        }
+
+        # Upload data
+        endpoint = "data/upload"
+        url = urljoin(base_url, endpoint)
+        response = requests.post(url, headers=headers, json=training_data)
+        print(response.text)
+
+
+        # Monitor meanshift
+        endpoint = "/metrics/drift/meanshift/request"
+        url = urljoin(base_url, endpoint)
+
+        payload = {
+            "modelId": model_name,
+            "referenceTag": data_tag
+        }
+
+        response = requests.post(url, headers=headers, json=payload)
+        print(response.text)
+
+        EOF

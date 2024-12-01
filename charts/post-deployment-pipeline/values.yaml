@@ -1,0 +1,5 @@
+---
+model_namespace:  user1-test
+cluster_domain: app.cluster.xyz
+alert_trigger: false
+model_version: None
