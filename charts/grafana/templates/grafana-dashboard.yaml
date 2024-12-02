@@ -37,7 +37,7 @@ spec:
       url: 'https://thanos-querier.openshift-monitoring.svc.cluster.local:9091'
   instanceSelector:
     matchLabels:
-      dasboards: "grafana"
+      dashboards: "grafana"
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
