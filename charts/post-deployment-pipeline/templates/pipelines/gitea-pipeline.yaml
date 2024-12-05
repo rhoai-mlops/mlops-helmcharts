@@ -1,0 +1,76 @@
+---
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: post-deployment-pipeline
+spec:
+  params:
+    - name: APPLICATION_NAME
+      type: string
+      default: ""
+    - name: PROJECT_NAME
+      type: string
+      default: ""
+    - name: GIT_URL
+      type: string
+      default: ""
+    - name: GIT_REVISION
+      type: string
+      default: "main"
+    - name: GIT_REF
+      type: string
+      default: "refs/heads/main"
+    - name: GIT_SHORT_REVISION
+      type: string
+      default: ""
+    - name: GIT_BRANCH
+      type: string
+      default: ""
+    - name: GIT_COMMIT_AUTHOR
+      type: string
+      default: ""
+  tasks:          
+    # update model metadata
+    - name: update-model-registry-labels
+      taskRef:
+        name: update-model-registry-labels
+        kind: Task
+      params:
+        - name: APPLICATION_NAME
+          value: "$(params.APPLICATION_NAME)"
+        - name: VERSION
+          value: "$(params.GIT_SHORT_REVISION)"
+        - name: DEPLOY_ENVIRONMENT
+          value: "test"
+        - name: PROJECT_NAME
+          value: {{ .Values.USER_NAME }}
+        - name: KFP_RUN_ID
+          value: "$(tasks.execute-ds-pipeline.results.KFP_RUN_ID)"
+        - name: GIT_COMMIT_AUTHOR
+          value: "$(params.GIT_COMMIT_AUTHOR)"
+
+    # update trustyai service
+    - name: update-trustyai-service
+      taskRef:
+        name: update-trustyai-service
+        kind: Task
+      runAfter:
+        - update-model-registry-labels
+      params:
+        - name: APPLICATION_NAME
+          value: "$(params.APPLICATION_NAME)"
+        - name: VERSION
+          value: "$(params.GIT_SHORT_REVISION)"
+        - name: DEPLOY_ENVIRONMENT
+          value: "test"
+        - name: PROJECT_NAME
+          value: {{ .Values.USER_NAME }}
+        - name: KFP_RUN_ID
+          value: "$(tasks.execute-ds-pipeline.results.KFP_RUN_ID)"
+        - name: GIT_COMMIT_AUTHOR
+          value: "$(params.GIT_COMMIT_AUTHOR)"
+
+  results:
+    - name: KFP_RUN_ID
+      description: Run ID of the Data Science Pipeline
+      value: "$(tasks.execute-ds-pipeline.results.KFP_RUN_ID)"
