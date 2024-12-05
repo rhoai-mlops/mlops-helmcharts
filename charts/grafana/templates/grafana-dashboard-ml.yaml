@@ -1,43 +1,4 @@
----
-apiVersion: grafana.integreatly.org/v1beta1
-kind: GrafanaFolder
-metadata:
-  name: {{ .Release.Name }}-{{ .Release.Namespace }}-folder
-  namespace: {{ .Release.Namespace }}
-spec:
-  instanceSelector:
-    matchLabels:
-      dashboards: "grafana"
-  resyncPeriod: 5m
-  title: {{ .Release.Name }} {{ .Release.Namespace }} Dashboards
----
-apiVersion: grafana.integreatly.org/v1beta1
-kind: GrafanaDatasource
-metadata:
-  name: prometheus-grafanadatasource
-spec:
-  valuesFrom:
-    - targetPath: "secureJsonData.httpHeaderValue1"
-      valueFrom:
-        secretKeyRef:
-          name: "jukebox-grafana-sa-token"
-          key: "token"
-  datasource:
-      access: proxy
-      editable: true
-      isDefault: true
-      jsonData:
-        httpHeaderName1: 'Authorization'
-        timeInterval: 5s
-        tlsSkipVerify: true
-      name: Prometheus
-      secureJsonData:
-        httpHeaderValue1: "Bearer ${token}"
-      type: prometheus
-      url: 'https://thanos-querier.openshift-monitoring.svc.cluster.local:9091'
-  instanceSelector:
-    matchLabels:
-      dasboards: "grafana"
+{{ if .Values.include_trusty }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
@@ -45,7 +6,7 @@ metadata:
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-  name: {{ .Release.Name }}-ovms-dashboard
+  name: {{ .Release.Name }}-trusty-dashboard
   labels:
     dashboards: grafana
 spec:
@@ -80,17 +41,207 @@ spec:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 0,
-      "id": 5,
+      "id": 8,
       "links": [],
       "liveNow": false,
       "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "33115a6e-32c5-462c-83ca-d39452341a75"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
+          "id": 24,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "33115a6e-32c5-462c-83ca-d39452341a75"
+              },
+              "editorMode": "code",
+              "expr": "trustyai_meanshift{subcategory=\"input-2\"}",
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Data Drift for Danceability",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "33115a6e-32c5-462c-83ca-d39452341a75"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "id": 25,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "33115a6e-32c5-462c-83ca-d39452341a75"
+              },
+              "editorMode": "code",
+              "expr": "trustyai_spd",
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Bias Monitoring for is_explicit towards France",
+          "type": "timeseries"
+        },
         {
           "collapsed": false,
           "gridPos": {
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 0
+            "y": 8
           },
           "id": 16,
           "panels": [],
@@ -138,7 +289,7 @@ spec:
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 1
+            "y": 9
           },
           "id": 4,
           "options": {
@@ -214,7 +365,7 @@ spec:
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 1
+            "y": 9
           },
           "id": 6,
           "options": {
@@ -310,7 +461,7 @@ spec:
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 9
+            "y": 17
           },
           "id": 19,
           "options": {
@@ -428,7 +579,7 @@ spec:
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 9
+            "y": 17
           },
           "id": 20,
           "options": {
@@ -504,7 +655,7 @@ spec:
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 17
+            "y": 25
           },
           "id": 22,
           "options": {
@@ -584,7 +735,7 @@ spec:
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 17
+            "y": 25
           },
           "id": 23,
           "options": {
@@ -628,8 +779,8 @@ spec:
           {
             "current": {
               "selected": false,
-              "text": "",
-              "value": ""
+              "text": "jukebox",
+              "value": "jukebox"
             },
             "hide": 0,
             "label": "",
@@ -637,36 +788,36 @@ spec:
             "options": [
               {
                 "selected": true,
-                "text": "",
-                "value": ""
+                "text": "jukebox",
+                "value": "jukebox"
               }
             ],
-            "query": "",
+            "query": "jukebox",
             "skipUrlSync": false,
             "type": "textbox"
           },
           {
             "current": {
               "selected": false,
-              "text": "",
-              "value": ""
+              "text": "1",
+              "value": "1"
             },
             "hide": 0,
             "name": "model_version",
             "options": [
               {
                 "selected": true,
-                "text": "",
-                "value": ""
+                "text": "1",
+                "value": "1"
               }
             ],
-            "query": "",
+            "query": "1",
             "skipUrlSync": false,
             "type": "textbox"
           },
           {
             "current": {
-              "selected": true,
+              "selected": false,
               "text": "REST",
               "value": "REST"
             },
@@ -694,7 +845,7 @@ spec:
         ]
       },
       "time": {
-        "from": "now-1h",
+        "from": "now-5m",
         "to": "now"
       },
       "timepicker": {},
@@ -704,3 +855,4 @@ spec:
       "version": 1,
       "weekStart": ""
     }
+{{- end }}
