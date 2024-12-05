@@ -174,3 +174,8 @@ spec:
       header_name: "X-Forwarded-User"
     users:
       auto_assign_org_role: "Admin"
+      auto_assign_org: 'true'
+      auto_assign_org_id: '1'
+    security:
+      admin_password: grafana
+      admin_user: admin
