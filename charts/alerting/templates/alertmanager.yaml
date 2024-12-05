@@ -11,6 +11,6 @@ spec:
   - name: default
     webhookConfigs:
       - url: >-
-          https://el-ct-listener-{{ .Release.Namespace }}-mlops.{{ .Values.cluster_domain }}/
+          https://el-ct-listener-{{ .Values.user }}-mlops.{{ .Values.cluster_domain }}/
 
 {{- end }}
