@@ -1,4 +1,5 @@
 ---
 name: jukebox
+user: userX
 cluster_domain: apps.xxx.yyy.com
 alert_manager: false
