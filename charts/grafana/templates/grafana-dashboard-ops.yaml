@@ -665,7 +665,4 @@ spec:
       "version": 1,
       "weekStart": ""
     }
-<<<<<<< HEAD:charts/grafana/templates/grafana-dashboard-ops.yaml
 {{- end }}
-=======
->>>>>>> 97396d433b8d5e58abe1218d9a78f308860d2b4c:charts/grafana/templates/grafana-dashboard.yaml
