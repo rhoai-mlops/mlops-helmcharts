@@ -25,4 +25,4 @@ spec:
       url: 'https://thanos-querier.openshift-monitoring.svc.cluster.local:9091'
   instanceSelector:
     matchLabels:
-      dasboards: "grafana"
+      dashboards: "grafana"
