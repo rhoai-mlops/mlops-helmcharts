@@ -41,15 +41,12 @@ spec:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 0,
-      "id": 8,
+      "id": 2,
       "links": [],
       "liveNow": false,
       "panels": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "33115a6e-32c5-462c-83ca-d39452341a75"
-          },
+          "datasource": {},
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -141,10 +138,7 @@ spec:
           "type": "timeseries"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "33115a6e-32c5-462c-83ca-d39452341a75"
-          },
+          "datasource": {},
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -852,7 +846,7 @@ spec:
       "timezone": "",
       "title": "OpenVINO Model Server - Model Metrics",
       "uid": "Bdb-6G4Vk-github",
-      "version": 1,
+      "version": 3,
       "weekStart": ""
     }
 {{- end }}
