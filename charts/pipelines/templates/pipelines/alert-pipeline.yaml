@@ -18,9 +18,6 @@ spec:
     - name: VERSION
       type: string
       default: ""
-    - name: GIT_SHORT_REVISION
-      type: string
-      default: ""
     - name: GIT_REF
       type: string
       default: "refs/heads/main"
@@ -51,6 +48,22 @@ spec:
         - name: sslVerify
           value: "false"
 
+    # Fetch Git Commit SHA
+    - name: fetch-commit-hash
+      taskRef:
+        name: fetch-commit-hash
+        kind: Task
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: WORK_DIRECTORY
+          value: "$(params.APPLICATION_NAME)/$(params.GIT_BRANCH)"
+        - name: APPLICATION_NAME
+          value: "$(params.APPLICATION_NAME)"
+      runAfter:
+        - fetch-ds-pipeline-repository
+
     # Execute Data Science Pipeline
     - name: execute-ds-pipeline
       taskRef:
@@ -65,9 +78,9 @@ spec:
         - name: APPLICATION_NAME
           value: "$(params.APPLICATION_NAME)"
         - name: GIT_SHORT_REVISION
-          value: "$(params.VERSION)"
+          value: "$(params.VERSION)-$(tasks.fetch-commit-hash.results.GIT_SHORT_REVISION)"
       runAfter:
-        - fetch-ds-pipeline-repository
+        - fetch-commit-hash
 
     # Containerize the model (modelcar)
     - name: build-modelcar
@@ -83,7 +96,7 @@ spec:
         - name: APPLICATION_NAME
           value: "$(params.APPLICATION_NAME)"
         - name: VERSION
-          value: "$(params.VERSION)"
+          value: "$(params.VERSION)-$(tasks.fetch-commit-hash.results.GIT_SHORT_REVISION)"
         - name: PROJECT_NAME
           value: {{ .Values.USER_NAME }}
 
@@ -123,7 +136,7 @@ spec:
         - name: APPLICATION_NAME
           value: "$(params.APPLICATION_NAME)"
         - name: VERSION
-          value: "$(params.VERSION)"
+          value: "$(params.VERSION)-$(tasks.fetch-commit-hash.results.GIT_SHORT_REVISION)"
         - name: WORK_DIRECTORY
           value: "mlops-gitops/main/model-deployments/"
         - name: DEPLOY_ENVIRONMENT
@@ -142,7 +155,7 @@ spec:
         - name: APPLICATION_NAME
           value: "$(params.APPLICATION_NAME)"
         - name: VERSION
-          value: "$(params.VERSION)"
+          value: "$(params.VERSION)-$(tasks.fetch-commit-hash.results.GIT_SHORT_REVISION)"
         - name: DEPLOY_ENVIRONMENT
           value: "test"
         - name: PROJECT_NAME
@@ -153,6 +166,9 @@ spec:
           value: "$(params.GIT_COMMIT_AUTHOR)"
 
   results:
+    - name: GIT_SHORT_REVISION
+      description: Short commit hash
+      value: "$(tasks.fetch-commit-hash.results.GIT_SHORT_REVISION)"
     - name: KFP_RUN_ID
       description: Run ID of the Data Science Pipeline
       value: "$(tasks.execute-ds-pipeline.results.KFP_RUN_ID)"
