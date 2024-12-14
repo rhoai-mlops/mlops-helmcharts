@@ -2,7 +2,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: grafana-proxy
+  name: grafana-proxy-{{ .Release.Namespace }}
 rules:
   - verbs:
       - create
@@ -24,7 +24,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: grafana-proxy
+  name: grafana-proxy-{{ .Release.Namespace }}
 subjects:
   - kind: ServiceAccount
     name: grafana-sa
