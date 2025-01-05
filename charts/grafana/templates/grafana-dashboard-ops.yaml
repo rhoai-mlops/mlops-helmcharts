@@ -41,7 +41,7 @@ spec:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 0,
-      "id": 5,
+      "id": 4,
       "links": [],
       "liveNow": false,
       "panels": [
@@ -589,8 +589,8 @@ spec:
           {
             "current": {
               "selected": false,
-              "text": "",
-              "value": ""
+              "text": "jukebox",
+              "value": "jukebox"
             },
             "hide": 0,
             "label": "",
@@ -598,36 +598,36 @@ spec:
             "options": [
               {
                 "selected": true,
-                "text": "",
-                "value": ""
+                "text": "jukebox",
+                "value": "jukebox"
               }
             ],
-            "query": "",
+            "query": "jukebox",
             "skipUrlSync": false,
             "type": "textbox"
           },
           {
             "current": {
               "selected": false,
-              "text": "",
-              "value": ""
+              "text": "1",
+              "value": "1"
             },
             "hide": 0,
             "name": "model_version",
             "options": [
               {
                 "selected": true,
-                "text": "",
-                "value": ""
+                "text": "1",
+                "value": "1"
               }
             ],
-            "query": "",
+            "query": "1",
             "skipUrlSync": false,
             "type": "textbox"
           },
           {
             "current": {
-              "selected": true,
+              "selected": false,
               "text": "REST",
               "value": "REST"
             },
@@ -662,7 +662,7 @@ spec:
       "timezone": "",
       "title": "OpenVINO Model Server - Model Metrics",
       "uid": "Bdb-6G4Vk-github",
-      "version": 1,
+      "version": 2,
       "weekStart": ""
     }
 {{- end }}

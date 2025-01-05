@@ -31,14 +31,31 @@ spec:
     # Clone jukebox repository
     - name: fetch-ds-pipeline-repository
       taskRef:
-        name: git-clone
-        kind: ClusterTask
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: git-clone
+          - name: namespace
+            value: openshift-pipelines 
       workspaces:
         - name: output
           workspace: shared-workspace
       params:
+        - name: URL
+          value: "$(params.GIT_URL)"
+        - name: REVISION
+          value: "main"
+        - name: SUBDIRECTORY
+          value: "$(params.APPLICATION_NAME)/$(params.GIT_BRANCH)"
+        - name: DELETE_EXISTING
+          value: "true"
+        - name: SSL_VERIFY
+          value: "false"
+      params:
         - name: url
-          value: "https://{{ .Values.git_server }}/{{ .Values.USER_NAME }}/$(params.APPLICATION_NAME).git"
+          value: "$(params.GIT_URL)"
         - name: revision
           value: "main"
         - name: subdirectory
@@ -103,21 +120,27 @@ spec:
     # Fetch GitOps repository
     - name: fetch-gitops-repository
       taskRef:
-        name: git-clone
-        kind: ClusterTask
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: git-clone
+          - name: namespace
+            value: openshift-pipelines 
       workspaces:
         - name: output
           workspace: shared-workspace
       params:
-        - name: url
-          value: "https://{{ .Values.git_server }}/{{ .Values.USER_NAME }}/mlops-gitops.git"
-        - name: revision
+        - name: URL
+          value: "https://gitea-gitea.{{ .Values.cluster_domain }}/{{ .Values.USER_NAME }}/mlops-gitops.git"
+        - name: REVISION
           value: "main"
-        - name: subdirectory
+        - name: SUBDIRECTORY
           value: "mlops-gitops/main"
-        - name: deleteExisting
+        - name: DELETE_EXISTING
           value: "true"
-        - name: sslVerify
+        - name: SSL_VERIFY
           value: "false"
       runAfter:
         - build-modelcar
