@@ -18,6 +18,9 @@ metadata:
     opendatahub.io/dashboard: 'true'
 spec:
   predictor:
+    {{- if .Values.canary }}
+    canaryTrafficPercent: {{ .Values.canary.trafficPercent }}
+    {{- end }}
     model:
       modelFormat:
         name: onnx
