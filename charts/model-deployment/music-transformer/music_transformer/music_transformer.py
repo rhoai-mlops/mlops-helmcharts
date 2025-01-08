@@ -104,8 +104,7 @@ class MusicTransformer(kserve.Model):
         
         prediction = infer_response.outputs[0].as_numpy()
         logger.info("The output from model predict is %s", prediction)
-        most_likely_countries = np.argmax(prediction, axis=1)
-        country_codes = self.label_encoder.inverse_transform(most_likely_countries)
+        country_codes = self.label_encoder.classes_
         logger.info("Country code is %s", country_codes)
 
         # Note, we only handle postprocessing for V2 at the moment
