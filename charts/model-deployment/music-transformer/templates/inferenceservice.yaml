@@ -7,6 +7,9 @@ metadata:
     serving.knative.openshift.io/enablePassthrough: 'true'
     sidecar.istio.io/inject: 'true'
     sidecar.istio.io/rewriteAppHTTPProbers: 'true'
+    {{- if .Values.autoscaling }}
+    autoscaling.knative.dev/target: "1"
+    {{- end }}
   name: {{ .Values.name }}
   finalizers:
     - inferenceservice.finalizers
@@ -15,6 +18,9 @@ metadata:
     opendatahub.io/dashboard: 'true'
 spec:
   predictor:
+    {{- if .Values.canary }}
+    canaryTrafficPercent: {{ .Values.canary.trafficPercent }}
+    {{- end }}
     containers:
       - args:
           - '--model_name={{ .Values.name }}'
@@ -30,7 +36,7 @@ spec:
           - name: TS_SERVICE_ENVELOPE
             value: kserve
           - name: STORAGE_URI
-            value: oci://{{ .Values.image_registry | default "image-registry.openshift-image-registry.svc:5000" }}/{{ .Release.Namespace }}/{{ .Values.name }}:{{ .Values.version }}
+            value: oci://{{ .Values.image_repository | default "quay.io" }}/{{ .Values.image_namespace }}/{{ .Values.name }}:{{ .Values.version }}
         image: 'quay.io/modh/openvino_model_server@sha256:6c7795279f9075bebfcd9aecbb4a4ce4177eec41fb3f3e1f1079ce6309b7ae45'
         name: kserve-container
         resources:
@@ -47,8 +53,8 @@ spec:
           - '--grpc_port=8081'
           - '--predictor_host=localhost:8085'
           - '--predictor_use_ssl=False'
-          - '--scaler_file_path=models/{{ .Values.name }}/1/artifacts/scaler.pkl'
-          - '--encoder_file_path=models/{{ .Values.name }}/1/artifacts/label_encoder.pkl'
+          - '--scaler_file_path=/mnt/models/1/artifacts/scaler.pkl'
+          - '--encoder_file_path=/mnt/models/1/artifacts/label_encoder.pkl'
         command:
           - python
           - '-m'
