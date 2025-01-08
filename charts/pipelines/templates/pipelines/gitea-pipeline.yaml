@@ -58,17 +58,6 @@ spec:
           value: "true"
         - name: SSL_VERIFY
           value: "false"
-      params:
-        - name: url
-          value: "$(params.GIT_URL)"
-        - name: revision
-          value: "main"
-        - name: subdirectory
-          value: "$(params.APPLICATION_NAME)/$(params.GIT_BRANCH)"
-        - name: deleteExisting
-          value: "true"
-        - name: sslVerify
-          value: "false"
 
     # Execute Data Science Pipeline
     - name: execute-ds-pipeline
