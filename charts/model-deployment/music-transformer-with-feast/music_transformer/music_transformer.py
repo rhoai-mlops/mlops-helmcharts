@@ -159,7 +159,7 @@ class MusicTransformer(kserve.Model):
             infer_inputs = [
                 InferInput(
                     name=payload.inputs[0].name,
-                    datatype=payload.inputs[0].datatype,
+                    datatype="FP32",
                     shape=list(data.shape),
                     data=data,
                 )
