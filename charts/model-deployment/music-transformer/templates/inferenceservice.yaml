@@ -48,7 +48,7 @@ spec:
           - '--predictor_host=localhost:8085'
           - '--predictor_use_ssl=False'
           - '--scaler_file_path=/mnt/models/1/artifacts/scaler.pkl'
-          - '--encoder_file_path=mnt/models/1/artifacts/label_encoder.pkl'
+          - '--encoder_file_path=/mnt/models/1/artifacts/label_encoder.pkl'
         command:
           - python
           - '-m'
