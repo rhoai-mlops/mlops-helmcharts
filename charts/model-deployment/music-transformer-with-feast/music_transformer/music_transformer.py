@@ -158,8 +158,8 @@ class MusicTransformer(kserve.Model):
         else:
             infer_inputs = [
                 InferInput(
-                    name="dense_input",
-                    datatype="FP32",
+                    name=payload.inputs[0].name,
+                    datatype=payload.inputs[0].datatype,
                     shape=list(data.shape),
                     data=data,
                 )
