@@ -1,0 +1,3 @@
+feast-feature-server:
+  feature_store_yaml_base64: something
+  feast_mode: ui

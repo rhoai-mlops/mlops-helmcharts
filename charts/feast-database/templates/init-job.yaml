@@ -7,6 +7,8 @@ spec:
   template:
     spec:
       restartPolicy: Never
+      initcontainer:
+
       containers:
       - name: initialize-feast-database
         image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/s2i-generic-data-science-notebook:2024.2
@@ -15,8 +17,8 @@ spec:
         - /bin/bash
         - -c
         - |
-          git clone https://{{ .Values.git_server }}/{{ .Values.USER_NAME }}/jukebox.git
-          cd jukebox/7-feature-store/
+          git clone https://{{ .Values.USER_NAME }}:thisisthepassword@{{ .Values.git_server }}/{{ .Values.USER_NAME }}/jukebox.git
+          cd jukebox/7-feature_store/
           pip install -r requirements.txt
           cd feature_repo/
           feast apply
@@ -25,3 +27,5 @@ spec:
         envFrom:
           - secretRef:
               name: aws-connection-data
+          - secretRef:
+              name: git-auth
