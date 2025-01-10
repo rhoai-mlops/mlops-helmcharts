@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: initialize-feast-database
+spec:
+  backoffLimit: 4
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: initialize-feast-database
+        image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/s2i-generic-data-science-notebook:2024.2
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/bash
+        - -c
+        - |
+          git clone https://{{ .Values.git_server }}/{{ .Values.USER_NAME }}/jukebox.git
+          cd jukebox/7-feature-store/
+          pip install -r requirements.txt
+          cd feature_repo/
+          feast apply
+          CURRENT_TIME=$(date -u +"%Y-%m-%dT%H:%M:%S")
+          feast materialize 2023-01-01 $CURRENT_TIME
+        envFrom:
+          - secretRef:
+              name: aws-connection-data
