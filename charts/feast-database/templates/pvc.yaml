@@ -4,9 +4,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: feast
   labels:
-    app: mlops-feature-store
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    app: feast-database
 spec:
   accessModes:
   - ReadWriteOnce

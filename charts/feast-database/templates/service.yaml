@@ -4,9 +4,7 @@ kind: Service
 metadata:
   name: feast
   labels:
-    app: mlops-feature-store
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    app: feast-database
 spec:
   ports:
   - name: postgresql
@@ -14,6 +12,6 @@ spec:
     port: 5432
     targetPort: 5432
   selector:
-    app: mlops-feature-store
+    app: feast-database
   sessionAffinity: None
   type: ClusterIP

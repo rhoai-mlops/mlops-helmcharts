@@ -2,16 +2,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mlops-feature-store
+  name: feast-database
 spec:
   selector:
     matchLabels:
-      app: mlops-feature-store
+      app: feast-database
   replicas: 1
   template:
     metadata:
       labels:
-        app: mlops-feature-store
+        app: feast-database
     spec:
       containers:
         - name: postgresql
