@@ -7,8 +7,16 @@ spec:
   template:
     spec:
       restartPolicy: Never
-      initcontainer:
-
+      initContainers:
+      - name: check-feast-database
+        image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
+        command:
+        - /bin/bash
+        - -c
+        - |
+          echo -n "Waiting for feast postgresql pod in {{ .Release.Namespace }} namespace"
+          oc -n {{ .Release.Namespace }} wait pod -l app=feast-database --for=condition=Ready --timeout=180s
+          echo "Feast postgresql pod is running in {{ .Release.Namespace }} namespace"
       containers:
       - name: initialize-feast-database
         image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/s2i-generic-data-science-notebook:2024.2
