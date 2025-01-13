@@ -25,7 +25,7 @@ spec:
         - /bin/bash
         - -c
         - |
-          git clone https://{{ .Values.USER_NAME }}:$GIT_PASSWORD@{{ .Values.git_server }}/{{ .Values.USER_NAME }}/jukebox.git
+          git clone https://$USER_NAME:$GIT_PASSWORD@{{ .Values.git_server }}/$USER_NAME/jukebox.git
           cd jukebox/7-feature_store/
           pip install -r requirements.txt
           cd feature_repo/
@@ -38,6 +38,11 @@ spec:
               secretKeyRef:
                 name: git-auth
                 key: password
+          - name: USER_NAME
+            valueFrom:
+              secretKeyRef:
+                name: git-auth
+                key: username
         envFrom:
           - secretRef:
               name: aws-connection-data
