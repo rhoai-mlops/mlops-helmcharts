@@ -59,6 +59,20 @@ spec:
         - name: SSL_VERIFY
           value: "false"
 
+    # Apply any feature changes
+    - name: apply-feature-changes
+      taskRef:
+        name: apply-features
+        kind: Task
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: WORK_DIRECTORY
+          value: "$(params.APPLICATION_NAME)/$(params.GIT_BRANCH)/7-feature_store"
+      runAfter:
+        - fetch-ds-pipeline-repository
+
     # Execute Data Science Pipeline
     - name: execute-ds-pipeline
       taskRef:

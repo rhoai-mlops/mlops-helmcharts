@@ -25,15 +25,19 @@ spec:
         - /bin/bash
         - -c
         - |
-          git clone https://{{ .Values.USER_NAME }}:thisisthepassword@{{ .Values.git_server }}/{{ .Values.USER_NAME }}/jukebox.git
+          git clone https://{{ .Values.USER_NAME }}:$GIT_PASSWORD@{{ .Values.git_server }}/{{ .Values.USER_NAME }}/jukebox.git
           cd jukebox/7-feature_store/
           pip install -r requirements.txt
           cd feature_repo/
           feast apply
           CURRENT_TIME=$(date -u +"%Y-%m-%dT%H:%M:%S")
           feast materialize 2023-01-01 $CURRENT_TIME
+        env:
+          - name: GIT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: git-auth
+                key: password
         envFrom:
           - secretRef:
               name: aws-connection-data
-          - secretRef:
-              name: git-auth
