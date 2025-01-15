@@ -1,4 +1,7 @@
 ---
+# ML500 uses this password by defualt
+# If you update the password during the initial installation, make sure you update here as well.
+access_key: thisisthepassword
 buckets:
   - name: pipeline
   - name: models
