@@ -1,0 +1,15 @@
+---
+apiVersion: v2
+description: A Helm chart for deploying Feast UI 🎞
+name: feast
+version: 0.0.2
+home: https://rhoai-mlops.github.io/mlops/
+maintainers:
+  - name: RHRolun
+  - name: rcarrata
+  - name: ckavili
+
+dependencies:
+  - name: feast-feature-server
+    version: 0.40.1
+    repository: https://feast-helm-charts.storage.googleapis.com

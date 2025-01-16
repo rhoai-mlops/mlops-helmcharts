@@ -1,6 +1,6 @@
 ---
 apiVersion: v2
-description: A Helm chart for deploying Feast 😋
+description: A Helm chart for deploying a postgresql and initialize Feast 😋
 name: feast
 version: 0.0.2
 home: https://rhoai-mlops.github.io/mlops/

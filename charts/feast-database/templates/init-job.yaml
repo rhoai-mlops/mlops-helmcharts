@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: initialize-feast-database
+spec:
+  backoffLimit: 4
+  template:
+    spec:
+      restartPolicy: Never
+      initContainers:
+      - name: check-feast-database
+        image: image-registry.openshift-image-registry.svc:5000/openshift/tools:latest
+        command:
+        - /bin/bash
+        - -c
+        - |
+          echo -n "Waiting for feast postgresql pod in {{ .Release.Namespace }} namespace"
+          oc -n {{ .Release.Namespace }} wait pod -l app=feast-database --for=condition=Ready --timeout=180s
+          echo "Feast postgresql pod is running in {{ .Release.Namespace }} namespace"
+      containers:
+      - name: initialize-feast-database
+        image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/s2i-generic-data-science-notebook:2024.2
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/bash
+        - -c
+        - |
+          git clone https://$USER_NAME:$GIT_PASSWORD@{{ .Values.git_server }}/$USER_NAME/jukebox.git
+          cd jukebox/7-feature_store/
+          pip install -r requirements.txt
+          cd feature_repo/
+          feast apply
+          CURRENT_TIME=$(date -u +"%Y-%m-%dT%H:%M:%S")
+          feast materialize 2023-01-01 $CURRENT_TIME
+        env:
+          - name: GIT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: git-auth
+                key: password
+          - name: USER_NAME
+            valueFrom:
+              secretKeyRef:
+                name: git-auth
+                key: username
+        envFrom:
+          - secretRef:
+              name: aws-connection-data
