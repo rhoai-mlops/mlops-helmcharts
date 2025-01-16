@@ -7,6 +7,8 @@ metadata:
     serving.knative.openshift.io/enablePassthrough: 'true'
     sidecar.istio.io/inject: 'true'
     sidecar.istio.io/rewriteAppHTTPProbers: 'true'
+    prometheus.io/port: '8085'
+    prometheus.io/path: /metrics
   name: {{ .Values.name }}
   finalizers:
     - inferenceservice.finalizers
