@@ -59,6 +59,24 @@ spec:
         - name: SSL_VERIFY
           value: "false"
 
+    {{- if eq .Values.static_code_analysis true }}
+    # Linting and Sonarqube Static Code Analysis
+    - name: static-code-analysis
+      taskRef:
+        name: static-code-analysis
+        kind: Task
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: WORK_DIRECTORY
+          value: "$(params.APPLICATION_NAME)/$(params.GIT_BRANCH)/3-prod_datascience"
+        - name: sonarqube-auth
+          workspace: sonarqube-auth
+      runAfter:
+        - fetch-ds-pipeline-repository
+    {{- end }}
+
     {{- if eq .Values.apply_feature_changes true }}
     # Apply any feature changes
     - name: apply-feature-changes
@@ -94,6 +112,9 @@ spec:
         - fetch-ds-pipeline-repository
         {{- if eq .Values.apply_feature_changes true }}
         - apply-feature-changes
+        {{- end }}
+        {{- if eq .Values.static_code_analysis true }}
+        - static-code-analysis
         {{- end }}
 
     # Containerize the model (modelcar)

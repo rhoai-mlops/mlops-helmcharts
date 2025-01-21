@@ -1,3 +1,4 @@
+{{ if eq .Values.static_code_analysis true }}
 ---
 apiVersion: tekton.dev/v1
 kind: Task
@@ -10,6 +11,8 @@ spec:
     - name: WORK_DIRECTORY
       description: Directory to start build in (handle multiple branches)
       type: string
+    - name: sonarqube-auth
+      optional: true
   steps:
   - name: linting
     workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
@@ -17,18 +20,28 @@ spec:
     command: ["/bin/sh", "-c"]
     args:
     - |
-      python3 -m pip install flake8 pylint black isort mypy
-      # Check code formatting with Black 🖤
+      python3 -m pip install flake8 pylint black
+      # 🖤 Check code formatting with Black 🖤
       black . --check-diff
       if [ $? -eq 1 ]; then
           echo "Code formatting check failed. Run 'black .' locally to fix."
           exit 1
         fi
       
-      # Lint with flake8
+      # ❄️ Lint with flake8 ❄️
       # stop the build if there are Python syntax errors or undefined names
       flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 
-      # Lint with pylint
-      pylint $(git ls-files '*.py') --exit-zero
+      # # Lint with pylint
+      # pylint $(git ls-files '*.py') --exit-zero
 
+  - name: sonar-scan
+    workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
+    image: quay.io/rlundber/mlops-ct-cicd:0.4
+    command: ["/bin/sh", "-c"]
+    args:
+    - |
+      python3 -m pip pysonar-scanner
+      pysonar-scanner -Dsonar.host.url=http://sonarqube-sonarqube:9000 -Dsonar.projectKey=jukebox -Dsonar.login=$(cat $(workspaces.sonarqube-auth.path)/username) -Dsonar.password=$(cat $(workspaces.sonarqube-auth.path)/password)
+
+{{- end }}

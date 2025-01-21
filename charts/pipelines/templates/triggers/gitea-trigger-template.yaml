@@ -51,3 +51,8 @@ spec:
         - name: model-workspace
           persistentVolumeClaim:
             claimName: jukebox-model-pvc
+        {{- if eq .Values.static_code_analysis true }}
+        - name: sonarqube-auth
+          secret:
+            secretName: sonarqube-auth
+        {{- end }}
