@@ -7,12 +7,15 @@ metadata:
 spec:
   workspaces:
     - name: output
+    - name: sonarqube-auth
+      optional: true
   params:
     - name: WORK_DIRECTORY
       description: Directory to start build in (handle multiple branches)
       type: string
-    - name: sonarqube-auth
-      optional: true
+    - name: APPLICATION_NAME
+      description: Name of the application
+      type: string
   steps:
   - name: linting
     workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
@@ -42,6 +45,6 @@ spec:
     args:
     - |
       python3 -m pip pysonar-scanner
-      pysonar-scanner -Dsonar.host.url=http://sonarqube-sonarqube:9000 -Dsonar.projectKey=jukebox -Dsonar.login=$(cat $(workspaces.sonarqube-auth.path)/username) -Dsonar.password=$(cat $(workspaces.sonarqube-auth.path)/password)
+      pysonar-scanner -Dsonar.host.url=http://sonarqube-sonarqube:9000 -Dsonar.projectKey=$(params.APPLICATION_NAME) -Dsonar.login=$(cat $(workspaces.sonarqube-auth.path)/username) -Dsonar.password=$(cat $(workspaces.sonarqube-auth.path)/password)
 
 {{- end }}

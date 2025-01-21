@@ -71,6 +71,8 @@ spec:
       params:
         - name: WORK_DIRECTORY
           value: "$(params.APPLICATION_NAME)/$(params.GIT_BRANCH)/3-prod_datascience"
+        - name: APPLICATION_NAME
+          value: "$(params.APPLICATION_NAME)"
         - name: sonarqube-auth
           workspace: sonarqube-auth
       runAfter:
