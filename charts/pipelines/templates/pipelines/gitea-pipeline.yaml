@@ -59,6 +59,23 @@ spec:
         - name: SSL_VERIFY
           value: "false"
 
+    {{- if eq .Values.linting true }}
+    # Linting and Sonarqube Static Code Analysis
+    - name: linting
+      taskRef:
+        name: linting
+        kind: Task
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: WORK_DIRECTORY
+          value: "$(params.APPLICATION_NAME)/$(params.GIT_BRANCH)/3-prod_datascience"
+      runAfter:
+        - fetch-ds-pipeline-repository
+    {{- end }}
+
+
     {{- if eq .Values.static_code_analysis true }}
     # Linting and Sonarqube Static Code Analysis
     - name: static-code-analysis
@@ -68,15 +85,15 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
+        - name: sonarqube-auth
+          workspace: sonarqube-auth
       params:
         - name: WORK_DIRECTORY
           value: "$(params.APPLICATION_NAME)/$(params.GIT_BRANCH)/3-prod_datascience"
         - name: APPLICATION_NAME
           value: "$(params.APPLICATION_NAME)"
-        - name: sonarqube-auth
-          workspace: sonarqube-auth
       runAfter:
-        - fetch-ds-pipeline-repository
+        - linting
     {{- end }}
 
     {{- if eq .Values.apply_feature_changes true }}
@@ -114,6 +131,9 @@ spec:
         - fetch-ds-pipeline-repository
         {{- if eq .Values.apply_feature_changes true }}
         - apply-feature-changes
+        {{- end }}
+        {{- if eq .Values.linting true }}
+        - linting
         {{- end }}
         {{- if eq .Values.static_code_analysis true }}
         - static-code-analysis

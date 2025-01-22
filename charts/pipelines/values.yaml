@@ -4,4 +4,5 @@ git_server: gitea.app.cluster.xyz
 cluster_domain: app.cluster.xyz
 alert_trigger: false
 apply_feature_changes: false
+linting: false
 static_code_analysis: false
