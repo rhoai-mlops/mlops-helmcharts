@@ -23,7 +23,7 @@ spec:
     command: ["/bin/sh", "-c"]
     args:
     - |
-      python3 -m pip pysonar-scanner
+      python3 -m pip install pysonar-scanner
       pysonar-scanner -Dsonar.host.url=http://sonarqube-sonarqube:9000 -Dsonar.projectKey=$(params.APPLICATION_NAME) -Dsonar.login=$(cat $(workspaces.sonarqube-auth.path)/username) -Dsonar.password=$(cat $(workspaces.sonarqube-auth.path)/password)
 
 {{- end }}

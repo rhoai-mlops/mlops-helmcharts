@@ -54,5 +54,5 @@ spec:
         {{- if eq .Values.static_code_analysis true }}
         - name: sonarqube-auth
           secret:
-            secretName: sonarqube-auth
+            secretName: sonarqube-sonarqube
         {{- end }}
