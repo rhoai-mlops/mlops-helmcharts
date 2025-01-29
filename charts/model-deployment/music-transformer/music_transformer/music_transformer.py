@@ -6,6 +6,7 @@ import requests
 import numpy as np
 import os
 import pyarrow.fs
+import pandas as pd
 
 import kserve
 from kserve import InferRequest, InferResponse, InferInput, InferOutput
@@ -44,6 +45,12 @@ class MusicTransformer(kserve.Model):
         logger.info("Predictor use SSL = %s", predictor_use_ssl)
         logger.info("Scaler file path = %s", scaler_file_path)
         logger.info("Encoder file path = %s", encoder_file_path)
+        self.dtype_map = {
+            "FP32": np.float32,
+            "float32": np.float32,
+            "int64": np.int64,
+            "bool": np.bool_ 
+        }
 
         self.ready = True
 
@@ -65,10 +72,17 @@ class MusicTransformer(kserve.Model):
 
         self.scaler = self.load_scaler()
 
-        logger.info("Incoming payload: %s", payload)
-
         if isinstance(payload, InferRequest):
-            data = self.scaler.transform(payload.inputs[0].data)
+            logger.info("Incoming data: %s", [i.data for i in payload.inputs])
+            squeezed_data = np.squeeze([i.data for i in payload.inputs])
+            names = [i.name for i in payload.inputs]
+            print("Names: %s", names)
+            print("Datatypes: %s", [i.datatype for i in payload.inputs])
+            transposed_data = squeezed_data.T.reshape(1, -1)
+            data_df = pd.DataFrame(transposed_data, columns=names)[self.scaler.feature_names_in_]
+            logger.info("Incoming data: %s", data_df)
+            scaled_df = pd.DataFrame(self.scaler.transform(data_df), columns=data_df.columns)
+            data_dict = {name: scaled_df[[name]].to_numpy() for name in scaled_df.columns}
         else:
             headers["request-type"] = "v1"
             data = [
@@ -76,9 +90,7 @@ class MusicTransformer(kserve.Model):
                 for instance in payload["instances"]
             ]
 
-        data = np.asarray(data, dtype=np.float32).reshape(payload.inputs[0].shape)
-        logger.info("Data dtype: %s, shape: %s", data.dtype, data.shape)
-        logger.info("Data content: %s", data)
+        logger.info("Data content: %s", data_dict)
 
         if self.protocol == PredictorProtocol.REST_V1.value:
             inputs = [{"data": d.tolist()} for d in data]
@@ -87,12 +99,13 @@ class MusicTransformer(kserve.Model):
         else:
             infer_inputs = [
                 InferInput(
-                    name=payload.inputs[0].name,
-                    datatype=payload.inputs[0].datatype,
-                    shape=list(data.shape),
-                    data=data,
+                    name=name,
+                    datatype=payload.inputs[names.index(name)].datatype,
+                    shape=list(data_dict[name].shape),
+                    data=data_dict[name].astype(self.dtype_map[payload.inputs[names.index(name)].datatype]),
                 )
-            ]
+                for name in data_dict.keys()
+            ] 
             infer_request = InferRequest(model_name=self.name, infer_inputs=infer_inputs)
             return infer_request
 

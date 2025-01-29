@@ -58,7 +58,7 @@ spec:
           - python
           - '-m'
           - music_transformer
-        image: 'quay.io/rhoai-mlops/feast_music_transformer:0.2'
+        image: 'quay.io/rhoai-mlops/feast_music_transformer:0.3'
         name: transformer-container
         ports:
           - containerPort: 8080

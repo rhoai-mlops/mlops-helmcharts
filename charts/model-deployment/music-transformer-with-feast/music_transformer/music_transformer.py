@@ -6,6 +6,7 @@ import requests
 import numpy as np
 import os
 import pyarrow.fs
+import pandas as pd
 
 import kserve
 from kserve import InferRequest, InferResponse, InferInput, InferOutput
@@ -88,10 +89,7 @@ class MusicTransformer(kserve.Model):
         logger.info("feast response body %s", response_dict)
         return response_dict
     
-    def get_model_input_feature_names(self):
-        return ['is_explicit', 'duration_ms', 'danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']
-    
-    def extract_features(self, feature_dict):
+    def create_feature_dict(self, feature_dict):
         """
         feature_dict has the following format:
         {
@@ -107,22 +105,13 @@ class MusicTransformer(kserve.Model):
                 ...
             ]
         }
-        So we have to get the order of input features for the model, check the metadata for what order the feature names are returned in and then grab the result values based on that order.
+        We will simply merge the feature names with their values into a dictionary
         """
-        feature_names = self.get_model_input_feature_names()
-        feature_idxs = {}
-        for feature_name in feature_names:
-            feature_idxs[feature_name] = feature_dict["metadata"]["feature_names"].index(feature_name)
-        
-        features = []
-        for i in range(len(feature_dict["results"][0]["values"])):
-            single_entity_data = []
-            for feature_name in feature_names:
-                feature_value = feature_dict["results"][feature_idxs[feature_name]]["values"][i]
-                single_entity_data.append(feature_value)
-            features.append(single_entity_data)
-        
+        features = {}
+        for idx, name in enumerate(feature_dict["metadata"]["feature_names"]):
+            features[name] = feature_dict["results"][idx]["values"]
         return features
+    
 
     def preprocess(
         self, payload: Union[Dict, InferRequest], headers: Dict[str, str] = None
@@ -144,12 +133,11 @@ class MusicTransformer(kserve.Model):
         logger.info("Data content: %s", data)
 
         feature_dict = self.request_features(entities=np.array(data).flatten().tolist())
-        features = self.extract_features(feature_dict)
-        logger.info("Features: %s", features)
-        
-        data = self.scaler.transform(features)
-
-        data = np.asarray(data, dtype=np.float32).reshape(payload.inputs[0].shape[0], -1)
+        clean_features_dict = self.create_feature_dict(feature_dict)
+        logger.info("Features: %s", clean_features_dict)
+        features_df = pd.DataFrame(clean_features_dict)[self.scaler.feature_names_in_]
+        scaled_df = pd.DataFrame(self.scaler.transform(features_df), columns=features_df.columns)
+        data_dict = {name: scaled_df[[name]].to_numpy() for name in scaled_df.columns}
 
         if self.protocol == PredictorProtocol.REST_V1.value:
             inputs = [{"data": d.tolist()} for d in data]
@@ -158,12 +146,13 @@ class MusicTransformer(kserve.Model):
         else:
             infer_inputs = [
                 InferInput(
-                    name=payload.inputs[0].name,
+                    name=name,
                     datatype="FP32",
-                    shape=list(data.shape),
-                    data=data,
+                    shape=list(data_dict[name].shape),
+                    data=data_dict[name].astype(np.float32),
                 )
-            ]
+                for name in data_dict.keys()
+            ] 
             infer_request = InferRequest(model_name=self.name, infer_inputs=infer_inputs)
             return infer_request
 
