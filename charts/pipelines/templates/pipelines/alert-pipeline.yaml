@@ -44,7 +44,7 @@ spec:
           workspace: shared-workspace
       params:
         - name: URL
-          value: "$(params.GIT_URL)"
+          value: "https://{{ .Values.git_server }}/{{ .Values.USER_NAME }}/$(params.APPLICATION_NAME).git"
         - name: REVISION
           value: "main"
         - name: SUBDIRECTORY
