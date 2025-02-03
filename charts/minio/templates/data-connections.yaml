@@ -1,3 +1,4 @@
+{{ $password := .Values.password }}
 {{- range $bucket := .Values.buckets }}
 ---
 apiVersion: v1
