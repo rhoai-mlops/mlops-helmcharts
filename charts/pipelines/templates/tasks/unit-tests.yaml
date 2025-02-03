@@ -1,0 +1,23 @@
+{{ if eq .Values.unit_tests true }}
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: unit_tests
+spec:
+  workspaces:
+    - name: output
+  params:
+    - name: WORK_DIRECTORY
+      description: Directory to start build in (handle multiple branches)
+      type: string
+  steps:
+  - name: unit-tests
+    workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
+    image: quay.io/rlundber/mlops-ct-cicd:0.4
+    command: ["/bin/sh", "-c"]
+    args:
+    - |
+      python3 -m pip install -r tests/requirements.txt
+      PYTHONPATH=$(pwd) pytest tests/test_fetch_data.py
+{{- end }}
