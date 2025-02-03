@@ -12,8 +12,8 @@ metadata:
     openshift.io/display-name: {{ $bucket.name }}
 type: Opaque
 stringData:
-  AWS_ACCESS_KEY_ID: minio
-  AWS_SECRET_ACCESS_KEY: minio123
+  AWS_ACCESS_KEY_ID: {{ (split "-" $.Release.Namespace)._0 }}
+  AWS_SECRET_ACCESS_KEY: thisisthepassword
   AWS_DEFAULT_REGION: wonderland
   AWS_S3_ENDPOINT: http://minio-service.{{ $.Release.Namespace }}.svc.cluster.local:9000
   AWS_S3_BUCKET: {{ $bucket.name }}
