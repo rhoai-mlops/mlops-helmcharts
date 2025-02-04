@@ -60,6 +60,22 @@ spec:
           value: "true"
         - name: SSL_VERIFY
           value: "false"
+    
+    {{- if eq .Values.unit_tests true }}
+    # Run Unit Tests
+    - name: unit-tests
+      taskRef:
+        name: unit-tests
+        kind: Task
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: WORK_DIRECTORY
+          value: "$(params.APPLICATION_NAME)/$(params.GIT_BRANCH)/3-prod_datascience"
+      runAfter:
+        - fetch-ds-pipeline-repository
+    {{- end }}
 
     {{- if eq .Values.linting true }}
     # Linting and Sonarqube Static Code Analysis
@@ -139,6 +155,9 @@ spec:
         {{- end }}
         {{- if eq .Values.static_code_analysis true }}
         - static-code-analysis
+        {{- end }}
+        {{- if eq .Values.unit_tests true }}
+        - unit-tests
         {{- end }}
 
     # Containerize the model (modelcar)
