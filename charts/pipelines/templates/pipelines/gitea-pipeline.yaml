@@ -62,7 +62,7 @@ spec:
           value: "false"
     
     {{- if eq .Values.unit_tests true }}
-    # Linting and Sonarqube Static Code Analysis
+    # Run Unit Tests
     - name: unit-tests
       taskRef:
         name: unit-tests
