@@ -18,6 +18,6 @@ spec:
     command: ["/bin/sh", "-c"]
     args:
     - |
-      python3 -m pip install modelscan[tensorflow]
+      python3 -m pip install modelscan
       modelscan -p /models/$(params.APPLICATION_NAME).keras
 {{- end }}

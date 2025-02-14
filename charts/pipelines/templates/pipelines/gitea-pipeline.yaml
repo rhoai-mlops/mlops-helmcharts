@@ -168,7 +168,7 @@ spec:
         kind: Task
       workspaces:
         - name: output
-          workspace: shared-workspace
+          workspace: model-workspace
       params:
         - name: APPLICATION_NAME
           value: "$(params.APPLICATION_NAME)"
