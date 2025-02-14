@@ -127,7 +127,7 @@ spec:
                 "uid": "33115a6e-32c5-462c-83ca-d39452341a75"
               },
               "editorMode": "code",
-              "expr": "trustyai_meanshift{subcategory=\"input-2\"}",
+              "expr": "trustyai_meanshift{subcategory=\"danceability\"}",
               "instant": false,
               "legendFormat": "__auto",
               "range": true,
