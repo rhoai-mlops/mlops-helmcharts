@@ -160,13 +160,27 @@ spec:
         - unit-tests
         {{- end }}
 
+    {{- if eq .Values.model_scanning true }}
+    # Scan the model
+    - name: scan-model
+      taskRef:
+        name: scan-model
+        kind: Task
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: APPLICATION_NAME
+          value: "$(params.APPLICATION_NAME)"
+      runAfter:
+        - execute-ds-pipeline
+    {{- end }}
+
     # Containerize the model (modelcar)
     - name: build-modelcar
       taskRef:
         name: build-modelcar
         kind: Task
-      runAfter:
-        - execute-ds-pipeline
       workspaces:
         - name: output
           workspace: model-workspace
@@ -177,6 +191,11 @@ spec:
           value: "$(params.GIT_SHORT_REVISION)"
         - name: PROJECT_NAME
           value: {{ .Values.USER_NAME }}
+      runAfter:
+        - execute-ds-pipeline
+        {{- if eq .Values.model_scanning true }}
+        - scan-model
+        {{- end }}
 
     # Fetch GitOps repository
     - name: fetch-gitops-repository
