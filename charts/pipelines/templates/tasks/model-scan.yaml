@@ -1,0 +1,23 @@
+{{ if eq .Values.model_scanning true }}
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: scan-model
+spec:
+  workspaces:
+    - name: output
+  params:
+    - name: APPLICATION_NAME
+      description: Name of the application
+      type: string
+  steps:
+  - name: scan-model
+    workingDir: $(workspaces.output.path)
+    image: quay.io/rlundber/mlops-ct-cicd:0.4
+    command: ["/bin/sh", "-c"]
+    args:
+    - |
+      python3 -m pip install modelscan[tensorflow] numpy==1.26.4
+      modelscan -p $(params.APPLICATION_NAME).keras
+{{- end }}
