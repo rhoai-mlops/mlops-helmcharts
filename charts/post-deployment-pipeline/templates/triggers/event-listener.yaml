@@ -1,0 +1,25 @@
+# might need to update based on the Git Server we choose
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: post-deployment-listener
+spec:
+  triggers:
+    - triggerRef: post-deployment-gitea-trigger
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: el-post-deployment-listener
+spec:
+  to:
+    kind: Service
+    name: el-post-deployment-listener
+    weight: 100
+  port:
+    targetPort: http-listener
+  wildcardPolicy: None
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
