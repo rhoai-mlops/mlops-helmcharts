@@ -82,5 +82,5 @@ spec:
                 "title": "🤖 Model $(params.APPLICATION_NAME):$(params.VERSION) Deployment"
             }'
 
-            echo "a pull request is raised for prod: https://gitea-gitea.{{ .Values.cluster_domain }}/{{ .Values.USER_NAME }}/mlops-gitops/pulls/"
+            echo "☘️ A pull request is raised for prod: https://gitea-gitea.{{ .Values.cluster_domain }}/{{ .Values.USER_NAME }}/mlops-gitops/pulls/"
         fi
