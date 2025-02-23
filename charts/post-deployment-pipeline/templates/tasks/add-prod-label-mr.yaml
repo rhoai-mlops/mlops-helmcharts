@@ -55,7 +55,6 @@ spec:
         registry = ModelRegistry(server_address=f"https://{namespace}-registry-rest.{{ .Values.cluster_domain }}", port=443, author="$(params.GIT_COMMIT_AUTHOR)", is_secure=False)
 
         # Add label
-        # version.custom_properties["$(params.DEPLOY_ENVIRONMENT)"]=""
         for version in registry.get_model_versions("$(params.APPLICATION_NAME)"):
           if version.name != app_version and "$(params.DEPLOY_ENVIRONMENT)" in version.custom_properties.keys():
               version.custom_properties.pop("$(params.DEPLOY_ENVIRONMENT)")
