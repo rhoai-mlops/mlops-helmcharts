@@ -1,0 +1,58 @@
+---
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: post-prod-deploy-pipeline
+spec:
+  workspaces:
+    - name: shared-workspace
+  params:
+    - name: APPLICATION_NAME
+      type: string
+      default: ""
+    - name: PROJECT_NAME
+      type: string
+      default: ""
+  tasks:
+    # Fetch GitOps repository
+    - name: fetch-gitops-repository
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: git-clone
+          - name: namespace
+            value: openshift-pipelines 
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: URL
+          value: "https://gitea-gitea.{{ .Values.cluster_domain }}/{{ .Values.USER_NAME }}/mlops-gitops.git"
+        - name: REVISION
+          value: "main"
+        - name: SUBDIRECTORY
+          value: "mlops-gitops/main"
+        - name: DELETE_EXISTING
+          value: "true"
+        - name: SSL_VERIFY
+          value: "false"
+
+    # update model metadata
+    - name: add-prod-label-to-modelregistry
+      taskRef:
+        name: add-prod-label-mr
+        kind: Task
+      runAfter:
+        - deploy-test
+      params:
+        - name: APPLICATION_NAME
+          value: "$(params.APPLICATION_NAME)"
+        - name: DEPLOY_ENVIRONMENT
+          value: "prod"
+        - name: PROJECT_NAME
+          value: {{ .Values.USER_NAME }}
+
+

@@ -1,0 +1,21 @@
+---
+apiVersion: triggers.tekton.dev/v1beta1 
+kind: Trigger 
+metadata:
+  name: post-prod-deploy-trigger
+spec:
+  interceptors:
+     - ref:
+         name: "cel" 
+       params:
+        - name: filter
+          value: exists(body.commits, c, "model-deployments/prod/jukebox/config.yaml" in c.modified)
+        - name: overlays
+          value:
+          - expression: body.commits.map(c, c.modified).flatten().map(m, m.split("/")[2]).distinct()
+            key: application_name
+  bindings:
+    - name: application-name
+      value: $(extensions.application_name)
+  template: 
+     ref: post-prod-deploy-trigger-template

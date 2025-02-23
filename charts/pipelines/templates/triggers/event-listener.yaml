@@ -8,6 +8,7 @@ spec:
   triggers:
     - triggerRef: ct-gitea-trigger
     - triggerRef: ct-alert-trigger
+    - triggerRef: post-prod-deploy-trigger
 ---
 kind: Route
 apiVersion: route.openshift.io/v1
