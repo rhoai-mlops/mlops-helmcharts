@@ -3,7 +3,7 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: EventListener
 metadata:
-  name: post-deploy-listener
+  name: post-prod-deploy-listener
 spec:
   triggers:
     - triggerRef: post-prod-deploy-trigger
@@ -11,11 +11,11 @@ spec:
 kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
-  name: el-post-deploy-listener
+  name: el-post-prod-deploy-listener
 spec:
   to:
     kind: Service
-    name: el-post-deploy-listener
+    name: el-post-prod-deploy-listener
     weight: 100
   port:
     targetPort: http-listener

@@ -16,9 +16,15 @@ spec:
       type: string
     - name: GIT_COMMIT_AUTHOR
       description: Author of the git commit
+    - name: WORK_DIRECTORY
+      description: Directory to start build in (handle multiple branches)
+      type: string
+  workspaces:
+    - name: output
   steps:
     - name: update-model-metadata
       image: quay.io/rlundber/mlops-ct-cicd:0.4
+      workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
       command: ["/bin/sh", "-c"]
       args:
       - |
@@ -30,7 +36,7 @@ spec:
         from model_registry import ModelRegistry 
 
         # Path to your config.yaml file
-        config_file = "model-deployments/$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml"
+        config_file = "$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml"
 
         # Read and parse the YAML file
         with open(config_file, "r") as file:
@@ -59,7 +65,7 @@ spec:
         registry.update(version)
 
         # Update Model URI
-        model = registry.get_model_artifact("$(params.APPLICATION_NAME)", app_version)"
+        model = registry.get_model_artifact("$(params.APPLICATION_NAME)", app_version)
         model.uri = f"oci://image-registry.openshift-image-registry.svc:5000/$(params.PROJECT_NAME)-$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME):{app_version}"
         registry.update(model)
 

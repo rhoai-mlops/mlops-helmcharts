@@ -9,13 +9,13 @@ spec:
          name: "cel" 
        params:
         - name: filter
-          value: exists(body.commits, c, "model-deployments/prod/jukebox/config.yaml" in c.modified)
+          value: body.commits.exists(c, "model-deployments/prod/jukebox/config.yaml" in c.modified)
         - name: overlays
           value:
-          - expression: body.commits.map(c, c.modified).flatten().map(m, m.split("/")[2]).distinct()
+          - expression: body.commits.map(c, c.modified)[1][0].split("/")[2]
             key: application_name
   bindings:
-    - name: aapplication_name
+    - name: application_name
       value: $(extensions.application_name)
   template: 
      ref: post-prod-deploy-trigger-template
