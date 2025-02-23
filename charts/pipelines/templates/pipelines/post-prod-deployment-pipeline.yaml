@@ -46,7 +46,7 @@ spec:
         name: add-prod-label-mr
         kind: Task
       runAfter:
-        - deploy-test
+        - fetch-gitops-repository
       params:
         - name: APPLICATION_NAME
           value: "$(params.APPLICATION_NAME)"
