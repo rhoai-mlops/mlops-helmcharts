@@ -32,37 +32,49 @@ spec:
       image: quay.io/redhat-cop/tekton-task-helm:3.6.3
       script: |
         #!/bin/sh
-        yq eval -i .version=\"$(params.VERSION)\" "$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml"
-        yq eval -i .image_repository=\"image-registry.openshift-image-registry.svc:5000\" "$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml"
-        yq eval -i .image_namespace=\"$(params.PROJECT_NAME)-$(params.DEPLOY_ENVIRONMENT)\" "$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml"
+        if [[ $(params.DEPLOY_ENVIRONMENT) == "test" ]]; then
+          yq eval -i .version=\"$(params.VERSION)\" "$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml"
+          yq eval -i .image_repository=\"image-registry.openshift-image-registry.svc:5000\" "$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml"
+          yq eval -i .image_namespace=\"$(params.PROJECT_NAME)-$(params.DEPLOY_ENVIRONMENT)\" "$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml"
+        elif [[ $(params.DEPLOY_ENVIRONMENT) == "prod" ]]; then
+          git checkout -b $(params.APPLICATION_NAME)-$(params.VERSION)
+          yq eval -i .version=\"$(params.VERSION)\" "$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml"
+          yq eval -i .image_repository=\"image-registry.openshift-image-registry.svc:5000\" "$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml"
+          yq eval -i .image_namespace=\"$(params.PROJECT_NAME)-$(params.DEPLOY_ENVIRONMENT)\" "$(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml"
+        fi
+
     - name: commit-changes
       workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
       image: quay.io/redhat-cop/ubi8-git:latest
       script: |
         #!/bin/sh
         # Commit the changes :P
-        git config --global user.email "tekton@mlops.bot.com"
-        git config --global user.name "🐈 Tekton 🐈"
-        git config --global push.default simple
-        git config --global --add safe.directory '*'
-        git add $(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml
-        git commit -m "🚀 AUTOMATED COMMIT - Deployment of $(params.APPLICATION_NAME) for version $(params.VERSION) 🚀" || rc=$?
-        git remote set-url origin $(cat $HOME/.git-credentials)/$(params.PROJECT_NAME)/mlops-gitops.git
-        git push origin HEAD:main
-    - name: raise-pr
-      workingDir: $(workspaces.output.path)/$(params.WORK_DIRECTORY)
-      image: quay.io/redhat-cop/ubi8-git:latest
-      script: |
-        #!/bin/sh
-        if [[ $(params.DEPLOY_ENVIRONMENT) == "prod" ]]; then
-          curl -X 'POST' \
-            '$(cat $HOME/.git-credentials)/api/v1/repos/$(params.PROJECT_NAME)/$(params.APPLICATION_NAME)/pulls?token=<your-access-token>' \
-            -H 'accept: application/json' \
-            -H 'Content-Type: application/json' \
-            -d '{
-            "base": "main",
-            "body": "Experiment results can be found...",
-            "head": "$(params.APPLICATION_NAME)-$(params.VERSION)",
-            "title": "🔥Model $(params.APPLICATION_NAME):$(params.VERSION) Deployment🔥"
-          }'
+        if [[ $(params.DEPLOY_ENVIRONMENT) == "test" ]]; then
+          git config --global user.email "tekton@mlops.bot.com"
+          git config --global user.name "🐈 Tekton 🐈"
+          git config --global push.default simple
+          git config --global --add safe.directory '*'
+          git add $(params.DEPLOY_ENVIRONMENT)/$(params.APPLICATION_NAME)/config.yaml
+          git commit -m "🚀 AUTOMATED COMMIT - Deployment of $(params.APPLICATION_NAME) for version $(params.VERSION) 🚀" || rc=$?
+          git remote set-url origin $(cat $HOME/.git-credentials)/$(params.PROJECT_NAME)/mlops-gitops.git
+          git push origin HEAD:main
+        elif [[ $(params.DEPLOY_ENVIRONMENT) == "prod" ]]; then
+          git config --global user.email "tekton@mlops.bot.com"
+          git config --global user.name "🐈 Tekton 🐈"
+          git config --global push.default simple
+          git config --global --add safe.directory '*'
+          git add prod/$(params.APPLICATION_NAME)/config.yaml
+          git commit -m "🚀 AUTOMATED COMMIT - Deployment of $(params.APPLICATION_NAME) for version $(params.VERSION) 🚀" || rc=$?
+          git remote set-url origin $(cat $HOME/.git-credentials)/$(params.PROJECT_NAME)/mlops-gitops.git
+          git push origin $(params.APPLICATION_NAME)-$(params.VERSION)
+          curl --location 'https://gitea-gitea.{{ .Values.cluster_domain }}/api/v1/repos/{{ .Values.USER_NAME }}/mlops-gitops/pulls' --user 'opentlc-mgr:myPassw0rd' --header 'accept: application/json' --header 'Content-Type: application/json' \
+            --data '{
+                "assignee": "{{ .Values.USER_NAME }}",
+                "base": "main",
+                "body": "Experiment results can be found in [Model Registry](https://rhods-dashboard-redhat-ods-applications.{{ .Values.cluster_domain }}/modelRegistry/{{ .Values.USER_NAME }}-mlops-registry/).",
+                "head": "$(params.APPLICATION_NAME)-$(params.VERSION)",
+                "title": "🤖 Model $(params.APPLICATION_NAME):$(params.VERSION) Deployment"
+            }'
+
+            echo "☘️ A pull request is raised for prod: https://gitea-gitea.{{ .Values.cluster_domain }}/{{ .Values.USER_NAME }}/mlops-gitops/pulls/"
         fi
