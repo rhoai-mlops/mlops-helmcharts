@@ -59,12 +59,12 @@ spec:
               version.custom_properties.pop("$(params.DEPLOY_ENVIRONMENT)")
               version.author = "$(params.GIT_COMMIT_AUTHOR)"
               registry.update(version)
-              print(f"Removed label from {$(params.VERSION)}")
+              print("Removed label from $(params.VERSION)")
           elif version.name == "$(params.VERSION)":
               version.custom_properties["$(params.DEPLOY_ENVIRONMENT)"]=""
               version.author = "$(params.GIT_COMMIT_AUTHOR)"
               registry.update(version)
-              print(f"Added label to {$(params.VERSION)}")
+              print("Added label to $(params.VERSION)")
 
         # Update Model URI
         model = registry.get_model_artifact("$(params.APPLICATION_NAME)","$(params.VERSION)")
