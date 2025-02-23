@@ -274,7 +274,7 @@ spec:
         name: deploy-or-raise-pr
         kind: Task
       runAfter:
-        - fetch-gitops-repository
+        - deploy-test
       workspaces:
         - name: output
           workspace: shared-workspace
