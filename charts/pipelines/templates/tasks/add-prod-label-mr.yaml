@@ -2,7 +2,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: add-$(params.DEPLOY_ENVIRONMENT)-label-mr
+  name: add-prod-label-mr
 spec:
   params:
     - name: APPLICATION_NAME
