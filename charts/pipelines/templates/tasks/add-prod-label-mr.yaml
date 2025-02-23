@@ -20,7 +20,6 @@ spec:
       command: ["/bin/sh", "-c"]
       args:
       - |
-        version=`grep version model-deployments/prod/jukebox/config.yaml | cut -d':' -f2`
         python3 -m pip install model-registry=="0.2.10"
         cat << 'EOF' | python3
 

@@ -13,6 +13,9 @@ spec:
     - name: PROJECT_NAME
       type: string
       default: ""
+    - name: GIT_COMMIT_AUTHOR
+      type: string
+      default: ""
   tasks:
     # Fetch GitOps repository
     - name: fetch-gitops-repository
@@ -53,6 +56,8 @@ spec:
         - name: DEPLOY_ENVIRONMENT
           value: "prod"
         - name: PROJECT_NAME
+          value: {{ .Values.USER_NAME }}
+        - name: GIT_COMMIT_AUTHOR
           value: {{ .Values.USER_NAME }}
 
 
