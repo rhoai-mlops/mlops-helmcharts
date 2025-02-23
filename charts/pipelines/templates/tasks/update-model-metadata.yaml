@@ -49,15 +49,22 @@ spec:
 
         # Add metadata
         version.custom_properties["pipeline_run_id"] = "$(params.KFP_RUN_ID)"
-
-        # Add label
-        version.custom_properties["$(params.DEPLOY_ENVIRONMENT)"]=""
     
         # Update author with the git author
         version.author = "$(params.GIT_COMMIT_AUTHOR)"
 
-        # Update the metadata
-        registry.update(version)
+        # Add label
+        for version in registry.get_model_versions("$(params.APPLICATION_NAME)"):
+          if version.name != "$(params.VERSION)" and "$(params.DEPLOY_ENVIRONMENT)" in version.custom_properties.keys():
+              version.custom_properties.pop("$(params.DEPLOY_ENVIRONMENT)")
+              version.author = "$(params.GIT_COMMIT_AUTHOR)"
+              registry.update(version)
+              print("Removed label from $(params.VERSION)")
+          elif version.name == "$(params.VERSION)":
+              version.custom_properties["$(params.DEPLOY_ENVIRONMENT)"]=""
+              version.author = "$(params.GIT_COMMIT_AUTHOR)"
+              registry.update(version)
+              print("Added label to $(params.VERSION)")
 
         # Update Model URI
         model = registry.get_model_artifact("$(params.APPLICATION_NAME)","$(params.VERSION)")
