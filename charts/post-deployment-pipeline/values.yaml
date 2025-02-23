@@ -1,0 +1,4 @@
+---
+USER_NAME:  user1
+git_server: gitea.app.cluster.xyz
+cluster_domain: app.cluster.xyz

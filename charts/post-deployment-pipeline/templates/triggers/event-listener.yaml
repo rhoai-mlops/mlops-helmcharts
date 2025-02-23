@@ -3,21 +3,19 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: EventListener
 metadata:
-  name: ct-listener
+  name: post-prod-deploy-listener
 spec:
   triggers:
-    - triggerRef: ct-gitea-trigger
-    - triggerRef: ct-alert-trigger
     - triggerRef: post-prod-deploy-trigger
 ---
 kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
-  name: el-ct-listener
+  name: el-post-prod-deploy-listener
 spec:
   to:
     kind: Service
-    name: el-ct-listener
+    name: el-post-prod-deploy-listener
     weight: 100
   port:
     targetPort: http-listener
