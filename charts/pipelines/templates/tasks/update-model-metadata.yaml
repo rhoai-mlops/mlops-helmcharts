@@ -49,7 +49,6 @@ spec:
 
         # Add metadata
         version.custom_properties["pipeline_run_id"] = "$(params.KFP_RUN_ID)"
-        version.custom_properties["stage"] = "$(params.DEPLOY_ENVIRONMENT)"
 
         # Add label
         version.custom_properties["$(params.DEPLOY_ENVIRONMENT)"]=""
