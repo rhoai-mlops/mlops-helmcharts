@@ -55,7 +55,7 @@ spec:
 
         # Add label
         for version in registry.get_model_versions("$(params.APPLICATION_NAME)"):
-        if version.name != "$(params.VERSION)" and "$(params.DEPLOY_ENVIRONMENT)" in version.custom_properties.keys():
+          if version.name != "$(params.VERSION)" and "$(params.DEPLOY_ENVIRONMENT)" in version.custom_properties.keys():
               version.custom_properties.pop("$(params.DEPLOY_ENVIRONMENT)")
               version.author = "$(params.GIT_COMMIT_AUTHOR)"
               registry.update(version)
@@ -65,10 +65,6 @@ spec:
               version.author = "$(params.GIT_COMMIT_AUTHOR)"
               registry.update(version)
               print(f"Added label to {$(params.VERSION)}")
-        EOF
-
-        # Update the metadata
-        registry.update(version)
 
         # Update Model URI
         model = registry.get_model_artifact("$(params.APPLICATION_NAME)","$(params.VERSION)")
