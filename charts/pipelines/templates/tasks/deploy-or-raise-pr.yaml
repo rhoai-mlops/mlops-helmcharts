@@ -67,13 +67,7 @@ spec:
           git commit -m "🚀 AUTOMATED COMMIT - Deployment of $(params.APPLICATION_NAME) for version $(params.VERSION) 🚀" || rc=$?
           git remote set-url origin $(cat $HOME/.git-credentials)/$(params.PROJECT_NAME)/mlops-gitops.git
           git push origin $(params.APPLICATION_NAME)-$(params.VERSION)
-
-          # raise PR
-          if [[ $(params.DEPLOY_ENVIRONMENT) == "prod" ]]; then
-          curl --location 'https://gitea-gitea.{{ .Values.cluster_domain }}/api/v1/repos/{{ .Values.USER_NAME }}/mlops-gitops/pulls' \
-            -u opentlc-mgr:myPassw0rd \ 
-            --header 'accept: application/json' \
-            --header 'Content-Type: application/json' \
+          curl --location 'https://gitea-gitea.{{ .Values.cluster_domain }}/api/v1/repos/{{ .Values.USER_NAME }}/mlops-gitops/pulls' --user 'opentlc-mgr:myPassw0rd' --header 'accept: application/json' --header 'Content-Type: application/json' \
             --data '{
                 "assignee": "{{ .Values.USER_NAME }}",
                 "base": "main",
