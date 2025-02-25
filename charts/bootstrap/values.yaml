@@ -3,8 +3,6 @@ bindings: &binds
     kind: User
     role: admin
 namespaces:
-  - name: user1-mlops
-    bindings: *binds
   - name: user1-test
     bindings: *binds
   - name: user1-prod
