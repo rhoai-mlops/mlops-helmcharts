@@ -19,5 +19,5 @@ spec:
     args:
     - |
       python3 -m pip install modelscan[tensorflow] numpy==1.26.4
-      modelscan -p $(params.APPLICATION_NAME).keras
+      modelscan -p $(params.APPLICATION_NAME).keras --show-skipped
 {{- end }}
