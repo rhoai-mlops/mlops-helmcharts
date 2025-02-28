@@ -6,8 +6,10 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: {{ $ns | quote}}
-  {{- if $key.labels }}
   labels:
+    maistra.io/member-of: istio-system
+    modelmesh-enabled: 'false'
+  {{- if $key.labels }}
   {{- range $k,$v := $key.labels }}
     {{ $k }}: {{ $v | quote }}
   {{- end }}
