@@ -71,7 +71,7 @@ spec:
             --data '{
                 "assignee": "{{ .Values.USER_NAME }}",
                 "base": "main",
-                "body": "Experiment results can be found in [Model Registry](https://rhods-dashboard-redhat-ods-applications.{{ .Values.cluster_domain }}/modelRegistry/{{ .Values.USER_NAME }}-mlops-registry/).",
+                "body": "Experiment results can be found in [Model Registry](https://rhods-dashboard-redhat-ods-applications.{{ .Values.cluster_domain }}/modelRegistry/{{ .Values.USER_NAME }}-prod-registry/).",
                 "head": "$(params.APPLICATION_NAME)-$(params.VERSION)",
                 "title": "🤖 Model $(params.APPLICATION_NAME):$(params.VERSION) Deployment"
             }'
