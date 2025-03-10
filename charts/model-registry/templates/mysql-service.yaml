@@ -2,8 +2,8 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ .Values.name }}-mlops-registry-db
-  namespace: {{ .Values.name }}-mlops
+  name: {{ .Values.name }}-prod-registry-db
+  namespace: {{ .Values.name }}-toolings
   labels:
     component: db
 spec:

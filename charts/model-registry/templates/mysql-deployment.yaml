@@ -2,8 +2,8 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: {{ .Values.name }}-mlops-registry-db
-  namespace: {{ .Values.name }}-mlops
+  name: {{ .Values.name }}-prod-registry-db
+  namespace: {{ .Values.name }}-toolings
   labels:
     component: db
 spec:
@@ -50,9 +50,9 @@ spec:
           terminationMessagePolicy: File
           envFrom:
             - configMapRef:
-                name: {{ .Values.name }}-mlops-registry-db-parameters
+                name: {{ .Values.name }}-prod-registry-db-parameters
             - secretRef:
-                name: {{ .Values.name }}-mlops-registry-db-secrets
+                name: {{ .Values.name }}-prod-registry-db-secrets
           image: 'mysql:8.0.3'
           args:
             - '--datadir'
