@@ -3,7 +3,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: metadata-mysql
-  namespace: {{ .Values.name }}-mlops
+  namespace: {{ .Values.name }}-toolings
 spec:
   accessModes:
     - ReadWriteOnce
