@@ -5,11 +5,11 @@ metadata:
   name: dashboard-permissions-{{ .Values.name }}-toolings
   namespace: rhoai-model-registries
   labels:
-    app: {{ .Values.name }}-toolings-registry
-    app.kubernetes.io/component: {{ .Values.name }}-toolings-registry
-    app.kubernetes.io/name: {{ .Values.name }}-toolings-registry
-    app.kubernetes.io/part-of: {{ .Values.name }}-toolings-registry
-    component: {{ .Values.name }}-toolings-registry
+    app: {{ .Values.name }}-prod-registry
+    app.kubernetes.io/component: {{ .Values.name }}-prod-registry
+    app.kubernetes.io/name: {{ .Values.name }}-prod-registry
+    app.kubernetes.io/part-of: {{ .Values.name }}-prod-registry
+    component: {{ .Values.name }}-prod-registry
     opendatahub.io/dashboard: 'true'
 subjects:
   - kind: User
@@ -18,4 +18,4 @@ subjects:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: registry-user-{{ .Values.name }}-toolings-registry
+  name: registry-user-{{ .Values.name }}-prod-registry

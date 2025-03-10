@@ -2,7 +2,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ .Values.name }}-toolings-registry-db
+  name: {{ .Values.name }}-prod-registry-db
   namespace: {{ .Values.name }}-toolings
   labels:
     component: db
