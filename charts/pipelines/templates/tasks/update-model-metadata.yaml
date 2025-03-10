@@ -40,7 +40,7 @@ spec:
           namespace = namespace_file.read()
         
         namespace = namespace.split("-")[0]+"-prod"
-        
+
         environ["KF_PIPELINES_SA_TOKEN_PATH"] = "/var/run/secrets/kubernetes.io/serviceaccount/token"
   
         registry = ModelRegistry(server_address=f"https://{namespace}-registry-rest.{{ .Values.cluster_domain }}", port=443, author="$(params.GIT_COMMIT_AUTHOR)", is_secure=False)
@@ -51,9 +51,7 @@ spec:
 
         # Add metadata
         version.custom_properties["pipeline_run_id"] = "$(params.KFP_RUN_ID)"
-    
-        # Update author with the git author
-        version.author = "$(params.GIT_COMMIT_AUTHOR)"
+        registry.update(version)
 
         # Add label
         for version in registry.get_model_versions("$(params.APPLICATION_NAME)"):

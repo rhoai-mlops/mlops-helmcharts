@@ -28,7 +28,7 @@ spec:
       command: ["/bin/sh", "-c"]
       args:
       - |
-        python3 -m pip install model-registry=="0.2.10"
+        python3 -m pip install model-registry=="0.2.10" pyyaml
         cat << 'EOF' | python3
 
         from os import environ
