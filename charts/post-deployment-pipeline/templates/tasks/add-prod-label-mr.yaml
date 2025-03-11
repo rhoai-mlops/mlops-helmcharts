@@ -55,17 +55,17 @@ spec:
         environ["KF_PIPELINES_SA_TOKEN_PATH"] = "/var/run/secrets/kubernetes.io/serviceaccount/token"
   
         registry = ModelRegistry(server_address=f"https://{namespace}-registry-rest.{{ .Values.cluster_domain }}", port=443, author="$(params.GIT_COMMIT_AUTHOR)", is_secure=False)
+        version.author = "$(params.GIT_COMMIT_AUTHOR)"
+        registry.update(version)
 
         # Add label
         for version in registry.get_model_versions("$(params.APPLICATION_NAME)"):
           if version.name != app_version and "$(params.DEPLOY_ENVIRONMENT)" in version.custom_properties.keys():
               version.custom_properties.pop("$(params.DEPLOY_ENVIRONMENT)")
-              version.author = "$(params.GIT_COMMIT_AUTHOR)"
               registry.update(version)
               print(f"Removed label from {app_version}")
           elif version.name == app_version:
               version.custom_properties["$(params.DEPLOY_ENVIRONMENT)"]=""
-              version.author = "$(params.GIT_COMMIT_AUTHOR)"
               registry.update(version)
               print(f"Added label to {app_version}")
 

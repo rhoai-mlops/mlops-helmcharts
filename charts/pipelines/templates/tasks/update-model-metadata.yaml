@@ -57,7 +57,6 @@ spec:
         for version in registry.get_model_versions("$(params.APPLICATION_NAME)"):
           if version.name != "$(params.VERSION)" and "$(params.DEPLOY_ENVIRONMENT)" in version.custom_properties.keys():
               version.custom_properties.pop("$(params.DEPLOY_ENVIRONMENT)")
-              version.author = "$(params.GIT_COMMIT_AUTHOR)"
               registry.update(version)
               print("Removed label from $(params.VERSION)")
           elif version.name == "$(params.VERSION)":
