@@ -32,7 +32,7 @@ spec:
         accessKey: AWS_ACCESS_KEY_ID
         secretKey: AWS_SECRET_ACCESS_KEY
         secretName: aws-connection-pipeline
-      scheme: https
+      scheme: http
   persistenceAgent:
     deploy: true
     numWorkers: 2
