@@ -6,6 +6,7 @@ metadata:
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "5"
   name: {{ .Release.Name }}-ovms-dashboard
   labels:
     dashboards: grafana
