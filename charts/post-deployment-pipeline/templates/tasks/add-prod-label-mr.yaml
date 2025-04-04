@@ -55,6 +55,8 @@ spec:
         environ["KF_PIPELINES_SA_TOKEN_PATH"] = "/var/run/secrets/kubernetes.io/serviceaccount/token"
   
         registry = ModelRegistry(server_address=f"https://{namespace}-registry-rest.{{ .Values.cluster_domain }}", port=443, author="$(params.GIT_COMMIT_AUTHOR)", is_secure=False)
+
+        version = registry.get_model_version("$(params.APPLICATION_NAME)", app_version)
         version.author = "$(params.GIT_COMMIT_AUTHOR)"
         registry.update(version)
 
