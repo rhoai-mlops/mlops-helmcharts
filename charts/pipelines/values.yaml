@@ -6,4 +6,5 @@ alert_trigger: false
 apply_feature_changes: false
 linting: false
 static_code_analysis: false
+image_signing: false
 generate_sboms: false
