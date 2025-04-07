@@ -197,11 +197,34 @@ spec:
         - scan-model
         {{- end }}
 
+    {{ if eq .Values.image_scan true }}
+    # Image Scanning
+    - name: image-scan
+      runAfter:
+      - build-modelcar
+      taskRef:
+        name: rox-image-scan
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: APPLICATION_NAME
+          value: "$(params.APPLICATION_NAME)"
+        - name: PROJECT_NAME
+          value: "{{ .Values.USER_NAME }}"
+        - name: VERSION
+          value: "$(params.GIT_SHORT_REVISION)"
+        - name: WORK_DIRECTORY
+          value: "$(params.APPLICATION_NAME)/$(params.GIT_BRANCH)"
+        - name: OUTPUT_FORMAT
+          value: table
+    {{- end }}
+
     {{ if eq .Values.image_signing true }}
     # Image Signing
     - name: image-signing
       runAfter:
-      - build-modelcar
+      - image-scan
       taskRef:
         name: image-signing
       workspaces:
