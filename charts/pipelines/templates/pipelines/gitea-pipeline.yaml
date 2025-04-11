@@ -146,7 +146,9 @@ spec:
         - name: GIT_SHORT_REVISION
           value: "$(params.GIT_SHORT_REVISION)"
       runAfter:
+        {{- if eq .Values.unit_tests false }}
         - fetch-ds-pipeline-repository
+        {{- end }}
         {{- if eq .Values.apply_feature_changes true }}
         - apply-feature-changes
         {{- end }}
