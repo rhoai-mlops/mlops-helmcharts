@@ -148,7 +148,7 @@ spec:
       runAfter:
         {{- if or (not .Values.unit_tests) (eq .Values.unit_tests false) }}
         - fetch-ds-pipeline-repository
-        {{- end}}
+        {{- end }}
         {{- if eq .Values.apply_feature_changes true }}
         - apply-feature-changes
         {{- end }}
