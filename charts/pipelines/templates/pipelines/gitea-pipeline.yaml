@@ -146,20 +146,19 @@ spec:
         - name: GIT_SHORT_REVISION
           value: "$(params.GIT_SHORT_REVISION)"
       runAfter:
-        {{- if eq .Values.unit_tests false }}
-        - fetch-ds-pipeline-repository
+        {{- if eq .Values.unit_tests true }}
+        - unit-tests
+        {{- end }}
+        {{- if (and .Values.linting (not .Values.static_code_analysis)) }}
+        - linting
+        {{- else if eq .Values.static_code_analysis true }}
+        - static-code-analysis
         {{- end }}
         {{- if eq .Values.apply_feature_changes true }}
         - apply-feature-changes
         {{- end }}
-        {{- if eq .Values.linting true }}
-        - linting
-        {{- end }}
-        {{- if eq .Values.static_code_analysis true }}
-        - static-code-analysis
-        {{- end }}
-        {{- if eq .Values.unit_tests true }}
-        - unit-tests
+        {{- if (not (or .Values.unit_tests .Values.linting .Values.static_code_analysis .Values.apply_feature_changes)) }}
+        - fetch-ds-pipeline-repository
         {{- end }}
 
     {{- if eq .Values.model_scanning true }}
@@ -194,9 +193,10 @@ spec:
         - name: PROJECT_NAME
           value: {{ .Values.USER_NAME }}
       runAfter:
-        - execute-ds-pipeline
         {{- if eq .Values.model_scanning true }}
         - scan-model
+        {{- else }}
+        - execute-ds-pipeline
         {{- end }}
 
     {{ if eq .Values.image_scan true }}
