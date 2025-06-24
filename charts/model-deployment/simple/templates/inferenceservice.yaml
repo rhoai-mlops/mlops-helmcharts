@@ -11,8 +11,6 @@ metadata:
     autoscaling.knative.dev/target: "1"
     {{- end }}
   name: {{ .Values.name }}
-  finalizers:
-    - inferenceservice.finalizers
   labels:
     # networking.knative.dev/visibility: cluster-local
     opendatahub.io/dashboard: 'true'
