@@ -34,6 +34,9 @@ spec:
     - name: GIT_COMMIT_AUTHOR
       type: string
       default: ""
+    - default: "false"
+      name: GIT_SSL_VERIFY
+      type: string
   tasks:
     # Clone jukebox repository
     - name: fetch-ds-pipeline-repository
@@ -59,7 +62,7 @@ spec:
         - name: DELETE_EXISTING
           value: "true"
         - name: SSL_VERIFY
-          value: "false"
+          value: "$(params.GIT_SSL_VERIFY)"
     
     {{- if eq .Values.unit_tests true }}
     # Run Unit Tests
@@ -288,7 +291,7 @@ spec:
         - name: DELETE_EXISTING
           value: "true"
         - name: SSL_VERIFY
-          value: "false"
+          value: "$(params.GIT_SSL_VERIFY)"
       runAfter:
         - build-modelcar
 
