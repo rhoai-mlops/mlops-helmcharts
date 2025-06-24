@@ -7,12 +7,6 @@ spec:
   params:
     - name: gitrepositoryurl
       description: The git repository url
-    - name: git-revision
-      description: The git revision
-      default: main
-    - name: git-ref
-      description: The full git ref
-      default: master
     - name: git-repo-name
       description: The name of the deployment to be created / patched
     - name: git-branch
@@ -34,12 +28,8 @@ spec:
             value: $(tt.params.git-repo-name)
           - name: GIT_URL
             value: $(tt.params.gitrepositoryurl)
-          - name: GIT_REVISION
-            value: $(tt.params.git-revision)
           - name: GIT_SHORT_REVISION
             value: $(tt.params.git-short-revision)
-          - name: GIT_REF
-            value: $(tt.params.git-ref)
           - name: GIT_BRANCH
             value: $(tt.params.git-branch)
           - name: GIT_COMMIT_AUTHOR
