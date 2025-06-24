@@ -19,12 +19,6 @@ spec:
     - name: GIT_URL
       type: string
       default: ""
-    - name: GIT_REVISION
-      type: string
-      default: "main"
-    - name: GIT_REF
-      type: string
-      default: "refs/heads/main"
     - name: GIT_SHORT_REVISION
       type: string
       default: ""
