@@ -16,6 +16,9 @@ spec:
     - name: GIT_SHORT_REVISION
       description: Short Git commit hast
       type: string
+    - name: DS_PIPELINES_NAMESPACE
+      description: Namespace where the Data Science Pipelines service is located
+      type: string
   results:
     - name: KFP_RUN_ID
       description: Run ID of the Data Science Pipeline
@@ -32,10 +35,7 @@ spec:
       import json
       from prod_train_save_pipeline import training_pipeline
 
-      namespace_file_path =\
-          '/var/run/secrets/kubernetes.io/serviceaccount/namespace'
-      with open(namespace_file_path, 'r') as namespace_file:
-          namespace = namespace_file.read()
+      namespace = "$(params.DS_PIPELINES_NAMESPACE)"
 
       kubeflow_endpoint =\
           f'https://ds-pipeline-dspa.{namespace}.svc:8443'
