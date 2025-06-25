@@ -37,6 +37,9 @@ spec:
     - default: "{{ .Values.USER_NAME }}-toolings"
       name: DS_PIPELINES_NAMESPACE
       type: string
+    - default: "false"
+      name: GIT_SSL_VERIFY
+
   tasks:
     # Clone jukebox repository
     - name: fetch-ds-pipeline-repository
@@ -62,7 +65,7 @@ spec:
         - name: DELETE_EXISTING
           value: "true"
         - name: SSL_VERIFY
-          value: "false"
+          value: "$(params.GIT_SSL_VERIFY)"
     
     {{- if eq .Values.unit_tests true }}
     # Run Unit Tests
@@ -293,7 +296,7 @@ spec:
         - name: DELETE_EXISTING
           value: "true"
         - name: SSL_VERIFY
-          value: "false"
+          value: "$(params.GIT_SSL_VERIFY)"
       runAfter:
         - build-modelcar
 
