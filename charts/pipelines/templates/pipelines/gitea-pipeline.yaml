@@ -28,9 +28,12 @@ spec:
     - name: GIT_COMMIT_AUTHOR
       type: string
       default: ""
+    - default: "{{ .Values.USER_NAME }}-toolings"
+      name: DS_PIPELINES_NAMESPACE
+      type: string
     - default: "false"
       name: GIT_SSL_VERIFY
-      type: string
+
   tasks:
     # Clone jukebox repository
     - name: fetch-ds-pipeline-repository
@@ -142,6 +145,8 @@ spec:
           value: "$(params.APPLICATION_NAME)"
         - name: GIT_SHORT_REVISION
           value: "$(params.GIT_SHORT_REVISION)"
+        - name: DS_PIPELINES_NAMESPACE
+          value: "$(params.DS_PIPELINES_NAMESPACE)"
       runAfter:
         {{- if eq .Values.unit_tests true }}
         - unit-tests
