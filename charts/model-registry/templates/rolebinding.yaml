@@ -2,19 +2,34 @@
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: dashboard-permissions-{{ .Values.name }}-toolings
+  name: {{ .Values.name }}-prod-registry
   namespace: rhoai-model-registries
-  labels:
-    app: {{ .Values.name }}-prod-registry
-    app.kubernetes.io/component: {{ .Values.name }}-prod-registry
-    app.kubernetes.io/name: {{ .Values.name }}-prod-registry
-    app.kubernetes.io/part-of: {{ .Values.name }}-prod-registry
-    component: {{ .Values.name }}-prod-registry
-    opendatahub.io/dashboard: 'true'
 subjects:
   - kind: User
     apiGroup: rbac.authorization.k8s.io
     name: {{ .Values.name }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: registry-user-{{ .Values.name }}-prod-registry
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: dashboard-permissions-{{ .Values.name }}-prod-registry
+  namespace: rhoai-model-registries
+  labels:
+    app: {{ .Values.name }}-prod-registry
+    app.kubernetes.io/component: model-registry
+    app.kubernetes.io/name: {{ .Values.name }}-prod-registry
+    app.kubernetes.io/part-of: model-registry
+    component: model-registry
+    opendatahub.io/dashboard: 'true'
+    opendatahub.io/rb-project-subject: 'true'
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: 'system:serviceaccounts:{{ .Values.name }}-toolings'
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role

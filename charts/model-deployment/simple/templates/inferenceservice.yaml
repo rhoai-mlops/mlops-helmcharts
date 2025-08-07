@@ -13,6 +13,7 @@ metadata:
   name: {{ .Values.name }}
   finalizers:
     - inferenceservice.finalizers
+    - odh.inferenceservice.finalizers
   labels:
     # networking.knative.dev/visibility: cluster-local
     opendatahub.io/dashboard: 'true'
