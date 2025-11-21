@@ -1,4 +1,10 @@
 ---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: jukebox-grafana-sa
+  namespace: {{ .Release.Namespace }}
+---
 kind: Secret
 apiVersion: v1
 metadata:
