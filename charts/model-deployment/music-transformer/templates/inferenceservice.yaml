@@ -3,26 +3,41 @@ apiVersion: serving.kserve.io/v1beta1
 kind: InferenceService
 metadata:
   annotations:
+    security.opendatahub.io/enable-auth: 'false'
+    openshift.io/description: ''
     openshift.io/display-name: {{ .Values.name }}
-    serving.knative.openshift.io/enablePassthrough: 'true'
-    sidecar.istio.io/inject: 'true'
-    sidecar.istio.io/rewriteAppHTTPProbers: 'true'
-    prometheus.io/port: '8085'
-    prometheus.io/path: /metrics
-    {{- if .Values.autoscaling }}
-    autoscaling.knative.dev/target: "1"
+    serving.kserve.io/deploymentMode: RawDeployment
+    opendatahub.io/hardware-profile-namespace: redhat-ods-applications
+    opendatahub.io/hardware-profile-name: default-profile
+    {{- if eq .Values.version "latest" }}
+    opendatahub.io/connections: quay-conn
     {{- end }}
+    {{- if .Values.autoscaling }}
+    serving.kserve.io/autoscalerClass: hpa
+    {{- end }}
+    opendatahub.io/model-type: predictive
   name: {{ .Values.name }}
   finalizers:
     - inferenceservice.finalizers
+    - odh.inferenceservice.finalizers
   labels:
-    # networking.knative.dev/visibility: cluster-local
+    networking.kserve.io/visibility: exposed
     opendatahub.io/dashboard: 'true'
 spec:
   predictor:
-    {{- if .Values.canary }}
-    canaryTrafficPercent: {{ .Values.canary.trafficPercent }}
+    {{- if .Values.autoscaling }}
+    scaleTarget: 5
+    scaleMetric: memory
     {{- end }}
+    automountServiceAccountToken: false
+    deploymentStrategy:
+      type: RollingUpdate
+    {{- if eq .Values.version "latest" }}
+    imagePullSecrets:
+      - name: quay-conn
+    {{- end }}
+    maxReplicas: {{ if .Values.autoscaling }}3{{ else }}1{{ end }}
+    minReplicas: 1
     containers:
       - args:
           - '--model_name={{ .Values.name }}'
@@ -39,7 +54,7 @@ spec:
             value: kserve
           - name: STORAGE_URI
             value: oci://{{ .Values.image_repository | default "quay.io" }}/{{ .Values.image_namespace }}/{{ .Values.name }}:{{ .Values.version }}
-        image: 'quay.io/modh/openvino_model_server@sha256:6c7795279f9075bebfcd9aecbb4a4ce4177eec41fb3f3e1f1079ce6309b7ae45'
+        image: 'registry.redhat.io/rhoai/odh-openvino-model-server-rhel9@sha256:defd01ac5a37a6138de73a8f1b10c676a2efa617238049378f8bc63fb0eb00c6'
         name: kserve-container
         resources:
           limits:

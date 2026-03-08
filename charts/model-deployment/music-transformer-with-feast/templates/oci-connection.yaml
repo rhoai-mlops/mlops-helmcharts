@@ -1,0 +1,15 @@
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: quay-conn
+  labels:
+    opendatahub.io/dashboard: 'true'
+  annotations:
+    opendatahub.io/connection-type-protocol: oci
+    opendatahub.io/connection-type-ref: oci-v1
+    openshift.io/display-name: quay-conn
+data:
+  .dockerconfigjson: ewogICJhdXRocyI6IHt9Cn0=
+  OCI_HOST: cXVheS5pbw==
+type: kubernetes.io/dockerconfigjson
