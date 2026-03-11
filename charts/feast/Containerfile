@@ -1,0 +1,2 @@
+FROM registry.redhat.io/rhoai/odh-feature-server-rhel9@sha256:d64ef2c03552dbc992baf38c1a9fb6411b2f5d6ab0db71810d659164597b7eaa
+RUN pip install s3fs==2024.6.1
