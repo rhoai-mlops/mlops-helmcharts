@@ -4,5 +4,6 @@ version: latest
 image_repository: quay.io
 image_namespace: rhoai-mlops
 autoscaling: false
+keda: false
 canary: {}
   # trafficPercent: 10

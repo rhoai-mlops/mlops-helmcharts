@@ -9,7 +9,6 @@ metadata:
     serving.kserve.io/deploymentMode: RawDeployment
     opendatahub.io/hardware-profile-namespace: redhat-ods-applications
     opendatahub.io/hardware-profile-name: default-profile
-    serving.kserve.io/enable-payload-logging-compression: "false"
     {{- if eq .Values.version "latest" }}
     opendatahub.io/connections: quay-conn
     {{- end }}

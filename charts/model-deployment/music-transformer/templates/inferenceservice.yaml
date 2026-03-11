@@ -9,11 +9,15 @@ metadata:
     serving.kserve.io/deploymentMode: RawDeployment
     opendatahub.io/hardware-profile-namespace: redhat-ods-applications
     opendatahub.io/hardware-profile-name: default-profile
+    opendatahub.io/model-type: predictive
     {{- if eq .Values.version "latest" }}
     opendatahub.io/connections: quay-conn
     {{- end }}
-    {{- if .Values.autoscaling }}
+    {{- if and .Values.autoscaling (not .Values.keda) }}
     serving.kserve.io/autoscalerClass: hpa
+    {{- end }}
+    {{- if .Values.keda }}
+    serving.kserve.io/autoscalerClass: keda
     {{- end }}
     opendatahub.io/model-type: predictive
   name: {{ .Values.name }}
@@ -25,7 +29,7 @@ metadata:
     opendatahub.io/dashboard: 'true'
 spec:
   predictor:
-    {{- if .Values.autoscaling }}
+    {{- if and .Values.autoscaling (not .Values.keda) }}
     scaleTarget: 5
     scaleMetric: memory
     {{- end }}
@@ -36,8 +40,31 @@ spec:
     imagePullSecrets:
       - name: quay-conn
     {{- end }}
-    maxReplicas: {{ if .Values.autoscaling }}3{{ else }}1{{ end }}
+    {{ if and .Values.autoscaling (not .Values.keda) }}
+    maxReplicas: 2
+    {{- else if .Values.keda }}
+    maxReplicas: 5
+    {{- else }}
+    maxReplicas: 1
+    {{- end }}
     minReplicas: 1
+    {{- if .Values.keda }}
+    autoScaling:
+      metrics:
+        - external:
+            authenticationRef:
+              authModes: bearer
+              authenticationRef:
+                name: inference-prometheus-auth
+            metric:
+              backend: prometheus
+              query: 'ovms_current_requests{namespace="{{ .Release.Namespace }}", name="jukebox", version="1"}'
+              serverAddress: 'https://thanos-querier.openshift-monitoring.svc.cluster.local:9091'
+            target:
+              type: Value
+              value: '1'
+          type: External
+    {{- end}}
     containers:
       - args:
           - '--model_name={{ .Values.name }}'
