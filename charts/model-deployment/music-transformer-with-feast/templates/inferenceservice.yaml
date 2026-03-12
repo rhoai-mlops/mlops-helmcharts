@@ -22,7 +22,7 @@ metadata:
     opendatahub.io/dashboard: 'true'
 spec:
   predictor:
-    automountServiceAccountToken: false
+    automountServiceAccountToken: true
     deploymentStrategy:
       type: RollingUpdate
     {{- if eq .Values.version "latest" }}
@@ -72,7 +72,7 @@ spec:
           - python
           - '-m'
           - music_transformer
-        image: 'quay.io/rhoai-mlops/feast_music_transformer:0.3'
+        image: 'quay.io/rhoai-mlops/feast_music_transformer:0.4'
         name: transformer-container
         ports:
           - containerPort: 8080

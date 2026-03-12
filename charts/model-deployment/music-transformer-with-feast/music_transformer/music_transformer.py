@@ -74,6 +74,10 @@ class MusicTransformer(kserve.Model):
         logger.info(f"Label encoder loaded from {self.encoder_file_path}")
         return label_encoder
     
+    def _get_sa_token(self):
+        with open('/var/run/secrets/kubernetes.io/serviceaccount/token', 'r') as f:
+            return f.read()
+
     def request_features(self, entities):
         entities = {
             self.entity_id_name: entities,
@@ -82,7 +86,13 @@ class MusicTransformer(kserve.Model):
             "feature_service": self.feature_service,
             "entities": entities
         }
-        response = requests.post(f"{self.feast_server_url}/get-online-features", json=json_data, verify=False)
+        token = self._get_sa_token()
+        response = requests.post(
+            f"{self.feast_server_url}/get-online-features",
+            json=json_data,
+            headers={"Authorization": f"Bearer {token}"},
+            verify=False
+        )
         logger.info("feast response status is %s", response.status_code)
         logger.info("feast response headers %s", response.headers)
         response_dict = response.json()
