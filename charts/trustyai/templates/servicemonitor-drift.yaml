@@ -1,0 +1,22 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: trustyai-drift-metrics
+spec:
+  endpoints:
+    - honorLabels: true
+      interval: 4s
+      metricRelabelings:
+        - action: keep
+          regex: trustyai_comparemeans|trustyai_meanshift
+          sourceLabels:
+            - __name__
+      path: /q/metrics
+      scheme: http
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: trustyai

@@ -1,0 +1,30 @@
+{{ if .Values.keda }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Namespace }}-keda-autoscaling-metrics
+rules:
+  - apiGroups:
+      - monitoring.coreos.com
+    resources:
+      - prometheuses
+      - prometheuses/api
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Release.Namespace }}-keda-autoscaling-metrics
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ .Release.Namespace }}-keda-autoscaling-metrics
+subjects:
+  - kind: ServiceAccount
+    name: inference-prometheus-auth
+    namespace: {{ .Release.Namespace }}
+{{- end }}

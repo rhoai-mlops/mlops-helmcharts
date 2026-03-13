@@ -3,35 +3,45 @@ apiVersion: serving.kserve.io/v1beta1
 kind: InferenceService
 metadata:
   annotations:
+    security.opendatahub.io/enable-auth: 'false'
+    openshift.io/description: ''
     openshift.io/display-name: {{ .Values.name }}
-    serving.knative.openshift.io/enablePassthrough: 'true'
-    sidecar.istio.io/inject: 'true'
-    sidecar.istio.io/rewriteAppHTTPProbers: 'true'
-    {{- if .Values.autoscaling }}
-    autoscaling.knative.dev/target: "1"
+    serving.kserve.io/deploymentMode: RawDeployment
+    opendatahub.io/hardware-profile-namespace: redhat-ods-applications
+    opendatahub.io/hardware-profile-name: default-profile
+    {{- if eq .Values.version "latest" }}
+    opendatahub.io/connections: quay-conn
     {{- end }}
+    opendatahub.io/model-type: predictive
   name: {{ .Values.name }}
   finalizers:
     - inferenceservice.finalizers
     - odh.inferenceservice.finalizers
   labels:
-    # networking.knative.dev/visibility: cluster-local
+    networking.kserve.io/visibility: exposed
     opendatahub.io/dashboard: 'true'
 spec:
   predictor:
-    {{- if .Values.canary }}
-    canaryTrafficPercent: {{ .Values.canary.trafficPercent }}
+    automountServiceAccountToken: false
+    deploymentStrategy:
+      type: RollingUpdate
+    {{- if eq .Values.version "latest" }}
+    imagePullSecrets:
+      - name: quay-conn
     {{- end }}
+    maxReplicas: 1
+    minReplicas: 1
     model:
       modelFormat:
         name: onnx
-      storageUri: oci://{{ .Values.image_repository | default "quay.io" }}/{{ .Values.image_namespace }}/{{ .Values.name }}:{{ .Values.version }}
+        version: '1'
       name: ''
       resources:
         limits:
           cpu: '2'
-          memory: 8Gi
+          memory: 4Gi
         requests:
-          cpu: '1'
+          cpu: '2'
           memory: 4Gi
       runtime: {{ .Values.name }}
+      storageUri: oci://{{ .Values.image_repository | default "quay.io" }}/{{ .Values.image_namespace }}/{{ .Values.name }}:{{ .Values.version }}

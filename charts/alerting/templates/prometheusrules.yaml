@@ -10,8 +10,8 @@ spec:
     # example alert - more to add
     - alert: {{ .Values.name }}-datadrift-alert
       annotations:
-        message: '{{ .Values.name }} meanshift p-value has dropped below 0.05 for danceability, indicating a drift in data over the last 5000 samples compared to the training data.'
-      expr: trustyai_meanshift{namespace="{{ .Release.Namespace }}", subcategory="danceability"}<0.05
+        message: '{{ .Values.name }} meanshift p-value has dropped below 0.05 for tempo, indicating a drift in data over the last 5000 samples compared to the training data.'
+      expr: trustyai_comparemeans{namespace="{{ .Release.Namespace }}", subcategory="danceability"}<0.05
       for: 1m
       labels:
         severity: "critical"

@@ -1,0 +1,51 @@
+---
+apiVersion: feast.dev/v1
+kind: FeatureStore
+metadata:
+  labels:
+    feature-store-ui: enabled
+  name: {{ .Values.USER_NAME }}-music
+spec:
+  feastProject: music
+  feastProjectDir:
+    git:
+      featureRepoPath: 7-feature_store/feature_repo
+      ref: main
+      url: 'https://{{ .Values.USER_NAME }}:thisisthepassword@{{ .Values.git_server }}/{{ .Values.USER_NAME }}/jukebox.git'
+  authz:
+    kubernetes:
+      roles:
+        - feast-reader
+        - feast-writer
+  services:
+    offlineStore:
+      server:
+        logLevel: debug
+        image: quay.io/rhoai-mlops/feast-server-with-s3fs:latest
+        envFrom:
+          - secretRef:
+              name: feast-s3-secret
+    onlineStore:
+      server:
+        logLevel: debug
+        image: quay.io/rhoai-mlops/feast-server-with-s3fs:latest
+        envFrom:
+          - secretRef:
+              name: feast-s3-secret
+      persistence:
+        store:
+          type: postgres
+          secretRef:
+            name: feast-online-store-secret
+    registry:
+      local:
+        server:
+          restAPI: true
+          envFrom:
+            - secretRef:
+                name: feast-s3-secret
+        persistence:
+          store:
+            type: sql
+            secretRef:
+              name: feast-registry-secret
