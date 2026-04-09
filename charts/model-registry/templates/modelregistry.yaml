@@ -12,6 +12,10 @@ metadata:
 spec:
   grpc:
     port: 9090
+  kubeRBACProxy:
+    port: 8443
+    routePort: 443
+    serviceRoute: enabled
   mysql:
     database: metadb
     host: {{ .Values.name }}-prod-registry-db.{{ .Values.name }}-toolings.svc.cluster.local
