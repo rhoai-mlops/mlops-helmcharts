@@ -6,17 +6,12 @@ metadata:
     feature-store-ui: enabled
   name: {{ .Values.USER_NAME }}-music
 spec:
-  feastProject: music
+  feastProject: {{ .Values.USER_NAME }}_music
   feastProjectDir:
     git:
       featureRepoPath: 7-feature_store/feature_repo
       ref: main
       url: 'https://{{ .Values.USER_NAME }}:thisisthepassword@{{ .Values.git_server }}/{{ .Values.USER_NAME }}/jukebox.git'
-  authz:
-    kubernetes:
-      roles:
-        - feast-reader
-        - feast-writer
   services:
     offlineStore:
       server:
