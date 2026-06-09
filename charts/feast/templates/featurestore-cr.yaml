@@ -12,6 +12,11 @@ spec:
       featureRepoPath: 7-feature_store/feature_repo
       ref: main
       url: 'https://{{ .Values.USER_NAME }}:thisisthepassword@{{ .Values.git_server }}/{{ .Values.USER_NAME }}/jukebox.git'
+  authz:
+    kubernetes:
+      roles:
+        - feast-reader
+        - feast-writer
   services:
     offlineStore:
       server:
