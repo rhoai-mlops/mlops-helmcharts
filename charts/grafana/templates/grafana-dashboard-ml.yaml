@@ -140,7 +140,7 @@ spec:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "trustyai_meanshift{subcategory=\"danceability\"}",
+              "expr": "trustyai_comparemeans{subcategory=\"danceability\"}",
               "instant": false,
               "legendFormat": "__auto",
               "range": true,
